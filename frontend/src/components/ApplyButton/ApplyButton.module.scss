@@ -1,0 +1,26 @@
+@use '../../styles/variables' as *;
+
+.wrapper {
+  display: grid;
+  gap: $space-2;
+}
+
+.button {
+  min-height: 48px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $color-primary;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: $color-primary-dark;
+}
+
+.note {
+  margin: 0;
+  color: $color-muted;
+  font-size: 0.875rem;
+}

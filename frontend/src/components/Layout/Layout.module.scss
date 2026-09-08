@@ -1,0 +1,56 @@
+@use '../../styles/variables' as *;
+
+.layout {
+  min-height: 100vh;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid $color-border;
+}
+
+.headerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $space-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: $color-primary;
+}
+
+.nav {
+  display: flex;
+  gap: $space-4;
+}
+
+.nav a {
+  color: $color-muted;
+  font-weight: 500;
+}
+
+.active {
+  color: $color-primary !important;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $space-4;
+}
+
+@include respond-md {
+  .main {
+    padding: $space-5;
+  }
+}

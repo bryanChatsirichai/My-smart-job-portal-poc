@@ -1,0 +1,47 @@
+@use '../../styles/variables' as *;
+
+.panel {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-4;
+  display: grid;
+  gap: $space-3;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.panel label {
+  display: grid;
+  gap: $space-2;
+  font-size: 0.875rem;
+  color: $color-muted;
+}
+
+.panel input {
+  min-height: 40px;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+}
+
+.panel select {
+  min-height: 40px;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+  background: $color-surface;
+}
+
+.panel button {
+  min-height: 44px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $color-primary;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}

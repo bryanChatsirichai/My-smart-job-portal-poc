@@ -1,0 +1,100 @@
+@use '../styles/variables' as *;
+
+.page {
+  display: grid;
+  gap: $space-5;
+}
+
+.hero {
+  background: linear-gradient(135deg, #ecfeff, #f8fafc);
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-5;
+}
+
+.hero h1 {
+  margin: 0 0 $space-2;
+}
+
+.hero p {
+  margin: 0 0 $space-4;
+  color: $color-muted;
+}
+
+.layout {
+  display: grid;
+  gap: $space-4;
+}
+
+@include respond-lg {
+  .layout {
+    grid-template-columns: 280px 1fr;
+    align-items: start;
+  }
+}
+
+.results {
+  display: grid;
+  gap: $space-4;
+}
+
+.summary {
+  display: grid;
+  gap: $space-2;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.chip {
+  background: #ecfeff;
+  color: #0e7490;
+  border-radius: $radius-pill;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.list {
+  display: grid;
+  gap: $space-3;
+}
+
+@include respond-md {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.skeletons {
+  display: grid;
+  gap: $space-3;
+}
+
+.skeleton {
+  height: 120px;
+  border-radius: $radius-md;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+.empty,
+.error {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-5;
+}
+
+.error {
+  color: $status-rejected;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

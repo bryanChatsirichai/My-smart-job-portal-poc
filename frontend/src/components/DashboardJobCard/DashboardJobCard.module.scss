@@ -1,0 +1,79 @@
+@use '../../styles/variables' as *;
+
+.card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-4;
+  display: grid;
+  gap: $space-3;
+  box-shadow: $shadow-sm;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.header h3 {
+  margin: 0 0 $space-1;
+}
+
+.header p {
+  margin: 0;
+  color: $color-muted;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-4;
+  color: $color-muted;
+  font-size: 0.875rem;
+}
+
+.statusField,
+.notesField {
+  display: grid;
+  gap: $space-2;
+  font-size: 0.875rem;
+  color: $color-muted;
+}
+
+.statusField select,
+.notesField textarea {
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+  background: $color-surface;
+}
+
+.notesField textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.actions a,
+.actions button {
+  min-height: 40px;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  display: inline-flex;
+  align-items: center;
+}
+
+.actions a:first-child {
+  background: $color-primary;
+  border-color: $color-primary;
+  color: white;
+  font-weight: 600;
+}

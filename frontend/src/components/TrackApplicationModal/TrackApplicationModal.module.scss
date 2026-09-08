@@ -1,0 +1,62 @@
+@use '../../styles/variables' as *;
+
+.dialog {
+  border: none;
+  border-radius: $radius-md;
+  padding: 0;
+  max-width: 480px;
+  width: calc(100% - 32px);
+  box-shadow: $shadow-md;
+}
+
+.dialog::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.content {
+  padding: $space-5;
+}
+
+.content h2 {
+  margin-top: 0;
+}
+
+.content p {
+  color: $color-muted;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-top: $space-4;
+}
+
+.actions button,
+.actions a {
+  min-height: 44px;
+  border-radius: $radius-sm;
+  padding: 0 $space-4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  cursor: pointer;
+}
+
+.primary {
+  background: $color-primary;
+  border-color: $color-primary;
+  color: white;
+  font-weight: 600;
+}
+
+@media (max-width: $breakpoint-md) {
+  .dialog {
+    margin: auto auto 0;
+    width: 100%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}

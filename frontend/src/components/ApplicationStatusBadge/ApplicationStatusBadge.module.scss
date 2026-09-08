@@ -1,0 +1,36 @@
+@use '../../styles/variables' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: $radius-pill;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.applied {
+  background: rgba($status-applied, 0.12);
+  color: $status-applied;
+}
+
+.interview {
+  background: rgba($status-interview, 0.12);
+  color: $status-interview;
+}
+
+.rejected {
+  background: rgba($status-rejected, 0.12);
+  color: $status-rejected;
+}
+
+.accepted {
+  background: rgba($status-accepted, 0.12);
+  color: $status-accepted;
+}
+
+.saved,
+.withdrawn {
+  background: rgba($status-saved, 0.12);
+  color: $status-saved;
+}

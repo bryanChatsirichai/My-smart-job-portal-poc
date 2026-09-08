@@ -1,0 +1,30 @@
+@use '../../styles/variables' as *;
+
+.searchBar {
+  display: flex;
+  gap: $space-2;
+}
+
+.searchBar input {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+  background: $color-surface;
+}
+
+.searchBar button {
+  min-height: 44px;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 0 $space-4;
+  background: $color-primary;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.searchBar button:hover {
+  background: $color-primary-dark;
+}

@@ -1,0 +1,41 @@
+@use '../../styles/variables' as *;
+
+.card {
+  display: block;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-4;
+  box-shadow: $shadow-sm;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: $shadow-md;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-3;
+}
+
+.title {
+  margin: 0 0 $space-1;
+  font-size: 1.05rem;
+}
+
+.company {
+  margin: 0;
+  color: $color-muted;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-4;
+  color: $color-muted;
+  font-size: 0.875rem;
+}

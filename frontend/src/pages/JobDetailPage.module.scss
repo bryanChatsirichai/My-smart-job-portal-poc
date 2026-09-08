@@ -1,0 +1,98 @@
+@use '../styles/variables' as *;
+
+.page {
+  display: grid;
+  gap: $space-4;
+}
+
+@include respond-lg {
+  .page {
+    grid-template-columns: 1fr 320px;
+    align-items: start;
+  }
+}
+
+.main,
+.sidebar,
+.state {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-5;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.header h1 {
+  margin: 0 0 $space-2;
+}
+
+.header p {
+  margin: 0;
+  color: $color-muted;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-4;
+  margin: $space-4 0;
+  color: $color-muted;
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-4;
+}
+
+.skills span {
+  background: #f1f5f9;
+  border-radius: $radius-pill;
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+}
+
+.description h2 {
+  margin-top: 0;
+}
+
+.description p {
+  white-space: pre-wrap;
+}
+
+.sidebar {
+  position: sticky;
+  top: 88px;
+}
+
+.toast {
+  position: fixed;
+  right: $space-4;
+  bottom: $space-4;
+  background: $color-primary;
+  color: white;
+  padding: $space-3 $space-4;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-md;
+}
+
+@media (max-width: $breakpoint-lg) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $radius-md $radius-md 0 0;
+    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .page {
+    padding-bottom: 140px;
+  }
+}
