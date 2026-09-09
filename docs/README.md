@@ -1,5 +1,11 @@
 # Documentation
 
+## Local development
+
+| Document | Description |
+|----------|-------------|
+| [SQLite DB viewer setup (Mac & Windows)](./sqlite-db-viewer-setup.md) | Open and inspect `backend/jobportal.db` during dev and testing |
+
 ## Architecture
 
 | Document | Description |

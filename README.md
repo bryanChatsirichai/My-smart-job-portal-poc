@@ -154,6 +154,8 @@ Expected output includes a `linkedin` entry when configured correctly. Without `
 
 The backend uses **SQLite** by default (`sqlite:///./jobportal.db` in `backend/.env`). No Docker or separate database server is required to run the POC locally.
 
+To browse job rows during dev testing, see [docs/sqlite-db-viewer-setup.md](docs/sqlite-db-viewer-setup.md) (DB Browser for SQLite on Mac and Windows).
+
 **Future — Postgres via Docker (optional, not required now):**
 
 [`docker-compose.yml`](docker-compose.yml) is included for when you later move job storage to Postgres (e.g. production scale, full sync volume, or hosted deployment). You do **not** need to run it for the current POC.
@@ -174,7 +176,7 @@ Re-run `uv run python -m app.worker --init-db` and sync after switching.
 
 ## Documentation
 
-See [`docs/`](docs/) for architecture details — especially [job ingestion](./docs/job-ingestion-architecture.md) (how jobs are gathered from APIs and served to the frontend).
+See [`docs/`](docs/) for architecture details — especially [job ingestion](./docs/job-ingestion-architecture.md) (how jobs are gathered from APIs and served to the frontend) and [viewing SQLite during dev](./docs/sqlite-db-viewer-setup.md).
 
 ## Environment
 
