@@ -2,6 +2,7 @@ import logging
 
 from app.adapters.adzuna.adapter import AdzunaAdapter
 from app.adapters.base import FetchParams, JobSourceAdapter
+from app.adapters.jobicy.adapter import JobicyAdapter
 from app.adapters.mycareersfuture.adapter import MyCareersFutureAdapter
 from app.config import settings
 from app.db.session import SessionLocal
@@ -11,7 +12,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_adapters() -> list[JobSourceAdapter]:
-    adapters: list[JobSourceAdapter] = [MyCareersFutureAdapter()]
+    adapters: list[JobSourceAdapter] = [
+        MyCareersFutureAdapter(),
+        JobicyAdapter(),
+    ]
     if AdzunaAdapter.is_configured():
         adapters.append(AdzunaAdapter())
     else:
@@ -22,6 +26,8 @@ def get_adapters() -> list[JobSourceAdapter]:
 def _page_size(adapter: JobSourceAdapter) -> int:
     if adapter.source_name == "adzuna":
         return settings.adzuna_page_size
+    if adapter.source_name == "jobicy":
+        return settings.jobicy_page_size
     return settings.mcf_page_size
 
 

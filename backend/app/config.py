@@ -9,8 +9,12 @@ class Settings(BaseSettings):
     sync_cron_schedule: str = "0 2 * * *"
     mcf_page_size: int = 100
     adzuna_page_size: int = 50
+    jobicy_page_size: int = 200
     adzuna_app_id: str = ""
     adzuna_app_key: str = ""
+    jobicy_geo: str = ""
+    jobicy_industry: str = ""
+    jobicy_tag: str = ""
 
 
 settings = Settings()

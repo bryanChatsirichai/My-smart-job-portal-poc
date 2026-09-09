@@ -5,6 +5,7 @@ All-in-one Singapore job aggregator with:
 - React + TypeScript frontend (`module.scss`)
 - SQLite job storage (no Docker required for local POC)
 - MyCareersFuture ingestion adapter (no API key)
+- Jobicy ingestion adapter (remote jobs, no API key — [Jobicy API](https://jobicy.com/jobs-rss-feed))
 - Adzuna ingestion adapter (free API key — see [docs/adzuna-setup.md](docs/adzuna-setup.md))
 - Browser `localStorage` application tracking (POC)
 
@@ -92,6 +93,7 @@ uv run python -m app.worker --sync
 | Source | Jobs per page | With `--max-pages 2` |
 |--------|---------------|----------------------|
 | MyCareersFuture | 100 | up to ~200 jobs |
+| Jobicy | 200 | up to ~200 jobs (single page; API max) |
 | Adzuna | 50 | up to ~100 jobs |
 
 Use `--max-pages 2` for fast local testing; use full `--sync` when you want a complete dataset.
