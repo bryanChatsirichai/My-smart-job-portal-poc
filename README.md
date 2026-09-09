@@ -6,7 +6,7 @@ All-in-one Singapore job aggregator with:
 - SQLite job storage (no Docker required for local POC)
 - MyCareersFuture ingestion adapter (no API key)
 - Jobicy ingestion adapter (remote jobs, no API key — [Jobicy API](https://jobicy.com/jobs-rss-feed))
-- Adzuna ingestion adapter (free API key — see [docs/adzuna-setup.md](docs/adzuna-setup.md))
+- Adzuna ingestion adapter (free API key — see [docs/adapters/adzuna.md](docs/adapters/adzuna.md))
 - LinkedIn ingestion adapter (self-hosted [LinkedIn Jobs API](https://github.com/atharv01h/Linkedin-Jobs-Api) scraper — sync only, not runtime)
 - Browser `localStorage` application tracking (POC)
 
@@ -31,7 +31,7 @@ Create `backend/.env` if needed (see [Environment](#environment) below).
 | `--init-db` | Creates SQLite tables in `jobportal.db` (run once, or after a DB/schema change) |
 | `--sync --max-pages 2` | Fetches up to 2 **pages per source** into SQLite (see [Refreshing job data](#refreshing-job-data)) |
 
-**Job sources:** MyCareersFuture and Jobicy work with no API keys. For Adzuna, add `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` — see [docs/adzuna-setup.md](docs/adzuna-setup.md). For LinkedIn, run a separate self-hosted scraper service and set `LINKEDIN_JOBS_API_URL` — see [LinkedIn setup](#linkedin-optional) below and [docs/README.md](docs/README.md#linkedin).
+**Job sources:** see [docs/adapters/](docs/adapters/) — MyCareersFuture and Jobicy need no API keys; Adzuna needs `ADZUNA_APP_ID` and `ADZUNA_APP_KEY`; LinkedIn needs a self-hosted scraper (`LINKEDIN_JOBS_API_URL`). Quick links: [MCF](docs/adapters/mycareersfuture.md) · [Jobicy](docs/adapters/jobicy.md) · [Adzuna](docs/adapters/adzuna.md) · [LinkedIn](docs/adapters/linkedin.md).
 
 **2. Frontend**
 
@@ -94,13 +94,13 @@ uv run python -m app.worker --sync
 | Source | Jobs per page | With `--max-pages 2` |
 |--------|---------------|----------------------|
 | MyCareersFuture | 100 | up to ~200 jobs |
-| Jobicy | 200 | up to ~200 jobs (single page; API max) |
+| Jobicy | 200 | `--max-pages 1` → 100 jobs; `2` or default → 200 (API max) |
 | Adzuna | 50 | up to ~100 jobs |
 | LinkedIn | 25 | up to ~50 jobs (requires self-hosted scraper; see `.env.example`) |
 
 Use `--max-pages 2` for fast local testing; use full `--sync` when you want a complete dataset.
 
-**Jobicy:** the public API returns at most **200 jobs per sync** (no pagination). `--max-pages 1` is enough for Jobicy; extra pages are ignored. Optional filters in `backend/.env`: `JOBICY_GEO`, `JOBICY_INDUSTRY`, `JOBICY_TAG` — see [Jobicy API docs](https://jobicy.com/jobs-rss-feed).
+**Jobicy:** one API call per sync; `count` is `100 × --max-pages` (1→100, 2→200), or **200** when `--max-pages` is omitted. Optional filters in `backend/.env`: `JOBICY_GEO`, `JOBICY_INDUSTRY`, `JOBICY_TAG` — see [Jobicy API docs](https://jobicy.com/jobs-rss-feed).
 
 See [job ingestion architecture](./docs/job-ingestion-architecture.md) for the full pipeline.
 
@@ -182,8 +182,7 @@ See [`docs/`](docs/) for architecture details — especially [job ingestion](./d
 
 - **Backend:** create `backend/.env` with at least `DATABASE_URL` and `CORS_ORIGINS` (defaults in root [`.env.example`](.env.example)).
 - **Jobicy (optional):** no API key. Uncomment filters in `.env.example` to narrow remote listings, e.g. `JOBICY_GEO=singapore`, `JOBICY_INDUSTRY=engineering`, `JOBICY_TAG=python`.
-- **Adzuna (optional):** `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` — [docs/adzuna-setup.md](docs/adzuna-setup.md).
-- **LinkedIn (optional):** `LINKEDIN_JOBS_API_URL` plus search params — requires the self-hosted [LinkedIn Jobs API](https://github.com/atharv01h/Linkedin-Jobs-Api) scraper. See [LinkedIn setup](#linkedin-optional) and [docs/README.md](docs/README.md#linkedin).
+- **Job sources:** [docs/adapters/](docs/adapters/) — setup and API reference per adapter.
 - **Frontend:** optional `frontend/.env` — leave `VITE_API_BASE_URL` empty so requests use the Vite `/api` proxy in dev.
 
 ## Notes

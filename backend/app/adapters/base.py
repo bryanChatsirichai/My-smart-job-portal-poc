@@ -8,6 +8,7 @@ from app.models.schemas import CanonicalJobInput
 class FetchParams:
     page: int = 0
     limit: int = 100
+    max_pages: int | None = None
 
 
 class JobSourceAdapter(ABC):

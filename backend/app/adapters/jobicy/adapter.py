@@ -8,7 +8,14 @@ from app.config import settings
 from app.models.schemas import CanonicalJobInput, LocationSchema
 
 JOBICY_BASE_URL = "https://jobicy.com/api/v2/remote-jobs"
-MAX_COUNT = 200
+API_MAX_COUNT = 200  # Jobicy API hard cap
+COUNT_PER_PAGE = 100  # one --max-pages unit → 100 jobs
+
+
+def _resolve_count(max_pages: int | None) -> int:
+    if max_pages is None:
+        return API_MAX_COUNT
+    return min(max_pages * COUNT_PER_PAGE, API_MAX_COUNT)
 
 
 class JobicyAdapter(JobSourceAdapter):
@@ -20,7 +27,7 @@ class JobicyAdapter(JobSourceAdapter):
         if params.page > 0:
             return []
 
-        count = min(params.limit, MAX_COUNT)
+        count = _resolve_count(params.max_pages)
         query: dict[str, str | int] = {"count": count}
         if settings.jobicy_geo:
             query["geo"] = settings.jobicy_geo
@@ -29,7 +36,7 @@ class JobicyAdapter(JobSourceAdapter):
         if settings.jobicy_industry:
             query["industry"] = settings.jobicy_industry
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.get(JOBICY_BASE_URL, params=query)
             response.raise_for_status()
             data = response.json()

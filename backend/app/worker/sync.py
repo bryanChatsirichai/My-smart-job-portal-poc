@@ -54,7 +54,9 @@ async def sync_source(adapter: JobSourceAdapter, max_pages: int | None = None) -
         if max_pages is not None and page >= max_pages:
             break
 
-        raw_jobs = await adapter.fetch_jobs(FetchParams(page=page, limit=page_size))
+        raw_jobs = await adapter.fetch_jobs(
+            FetchParams(page=page, limit=page_size, max_pages=max_pages)
+        )
         if not raw_jobs:
             break
 

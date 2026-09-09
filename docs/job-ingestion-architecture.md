@@ -94,6 +94,8 @@ class JobSourceAdapter(ABC):
 | Source ID | `raw["uuid"]` → `source_job_id` |
 | Apply URL | `metadata.jobDetailsUrl` |
 
+Full reference: [adapters/mycareersfuture.md](./adapters/mycareersfuture.md)
+
 ### Adzuna (second source)
 
 | Item | Value |
@@ -107,15 +109,7 @@ class JobSourceAdapter(ABC):
 
 The adapter is **only registered** when both env vars are set. Without keys, sync continues with MyCareersFuture only (no accidental expiry of Adzuna rows).
 
-**Setup:**
-
-1. Register at https://developer.adzuna.com
-2. Add to `backend/.env`:
-   ```env
-   ADZUNA_APP_ID=your_app_id
-   ADZUNA_APP_KEY=your_app_key
-   ```
-3. Run sync: `uv run python -m app.worker --sync --max-pages 2`
+Full reference: [adapters/adzuna.md](./adapters/adzuna.md)
 
 ### Adding more sources
 
