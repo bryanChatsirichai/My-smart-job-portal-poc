@@ -3,6 +3,7 @@ import logging
 from app.adapters.adzuna.adapter import AdzunaAdapter
 from app.adapters.base import FetchParams, JobSourceAdapter
 from app.adapters.jobicy.adapter import JobicyAdapter
+from app.adapters.linkedin.adapter import LinkedInAdapter
 from app.adapters.mycareersfuture.adapter import MyCareersFutureAdapter
 from app.config import settings
 from app.db.session import SessionLocal
@@ -20,6 +21,10 @@ def get_adapters() -> list[JobSourceAdapter]:
         adapters.append(AdzunaAdapter())
     else:
         logger.info("Adzuna adapter not registered (set ADZUNA_APP_ID and ADZUNA_APP_KEY)")
+    if LinkedInAdapter.is_configured():
+        adapters.append(LinkedInAdapter())
+    else:
+        logger.info("LinkedIn adapter not registered (set LINKEDIN_JOBS_API_URL)")
     return adapters
 
 
@@ -28,11 +33,15 @@ def _page_size(adapter: JobSourceAdapter) -> int:
         return settings.adzuna_page_size
     if adapter.source_name == "jobicy":
         return settings.jobicy_page_size
+    if adapter.source_name == "linkedin":
+        return settings.linkedin_page_size
     return settings.mcf_page_size
 
 
 async def sync_source(adapter: JobSourceAdapter, max_pages: int | None = None) -> dict[str, int | str]:
     if adapter.source_name == "adzuna" and not AdzunaAdapter.is_configured():
+        return {"source": adapter.source_name, "skipped": "not_configured"}
+    if adapter.source_name == "linkedin" and not LinkedInAdapter.is_configured():
         return {"source": adapter.source_name, "skipped": "not_configured"}
 
     page_size = _page_size(adapter)

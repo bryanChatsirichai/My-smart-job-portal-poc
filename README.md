@@ -7,6 +7,7 @@ All-in-one Singapore job aggregator with:
 - MyCareersFuture ingestion adapter (no API key)
 - Jobicy ingestion adapter (remote jobs, no API key — [Jobicy API](https://jobicy.com/jobs-rss-feed))
 - Adzuna ingestion adapter (free API key — see [docs/adzuna-setup.md](docs/adzuna-setup.md))
+- LinkedIn ingestion adapter (self-hosted [LinkedIn Jobs API](https://github.com/atharv01h/Linkedin-Jobs-Api) scraper — sync only, not runtime)
 - Browser `localStorage` application tracking (POC)
 
 ## Quick start
@@ -30,7 +31,7 @@ Create `backend/.env` if needed (see [Environment](#environment) below).
 | `--init-db` | Creates SQLite tables in `jobportal.db` (run once, or after a DB/schema change) |
 | `--sync --max-pages 2` | Fetches up to 2 **pages per source** into SQLite (see [Refreshing job data](#refreshing-job-data)) |
 
-For Adzuna (second source), add `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` to `backend/.env` — see [docs/adzuna-setup.md](docs/adzuna-setup.md).
+**Job sources:** MyCareersFuture and Jobicy work with no API keys. For Adzuna, add `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` — see [docs/adzuna-setup.md](docs/adzuna-setup.md). For LinkedIn, run a separate self-hosted scraper service and set `LINKEDIN_JOBS_API_URL` — see [LinkedIn setup](#linkedin-optional) below and [docs/README.md](docs/README.md#linkedin).
 
 **2. Frontend**
 
@@ -61,7 +62,7 @@ You do **not** need to re-run `--init-db` or `--sync` on every start. The API re
 
 ### How job data flows
 
-The running API **does not** call MyCareersFuture or Adzuna on each search. It only reads from **SQLite**:
+The running API **does not** call external job sources on each search. It only reads from **SQLite**:
 
 ```
 External APIs  →  sync worker (--sync)  →  jobportal.db  →  FastAPI  →  React
@@ -95,10 +96,57 @@ uv run python -m app.worker --sync
 | MyCareersFuture | 100 | up to ~200 jobs |
 | Jobicy | 200 | up to ~200 jobs (single page; API max) |
 | Adzuna | 50 | up to ~100 jobs |
+| LinkedIn | 25 | up to ~50 jobs (requires self-hosted scraper; see `.env.example`) |
 
 Use `--max-pages 2` for fast local testing; use full `--sync` when you want a complete dataset.
 
+**Jobicy:** the public API returns at most **200 jobs per sync** (no pagination). `--max-pages 1` is enough for Jobicy; extra pages are ignored. Optional filters in `backend/.env`: `JOBICY_GEO`, `JOBICY_INDUSTRY`, `JOBICY_TAG` — see [Jobicy API docs](https://jobicy.com/jobs-rss-feed).
+
 See [job ingestion architecture](./docs/job-ingestion-architecture.md) for the full pipeline.
+
+### LinkedIn (optional)
+
+LinkedIn listings are **not** fetched when users search the portal. They are ingested during `--sync`, same as every other source. You must run the unofficial [LinkedIn Jobs API](https://github.com/atharv01h/Linkedin-Jobs-Api) scraper as a **separate Node service** before syncing.
+
+**1. Start the scraper** (one-time clone; keep this terminal running during sync):
+
+```bash
+git clone https://github.com/atharv01h/Linkedin-Jobs-Api.git
+cd Linkedin-Jobs-Api
+npm install
+npm run dev --workspace=backend   # listens on http://localhost:3000
+```
+
+Swagger docs: http://localhost:3000/api/v1/docs
+
+**2. Configure the portal backend** — add to `backend/.env`:
+
+```env
+LINKEDIN_JOBS_API_URL=http://localhost:3000/api/v1
+LINKEDIN_KEYWORDS=software engineer
+LINKEDIN_LOCATION=Singapore
+LINKEDIN_DATE_SINCE_POSTED=past_week
+```
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `LINKEDIN_JOBS_API_URL` | Yes | Base URL of the scraper API (must include `/api/v1`) |
+| `LINKEDIN_KEYWORDS` | No | Search keywords passed to LinkedIn |
+| `LINKEDIN_LOCATION` | No | Location filter (default: `Singapore`) |
+| `LINKEDIN_DATE_SINCE_POSTED` | No | `past_24h`, `past_week`, or `past_month` (default: `past_week`) |
+
+**3. Sync** (scraper must be running):
+
+```bash
+cd backend
+uv run python -m app.worker --sync --max-pages 2
+```
+
+Expected output includes a `linkedin` entry when configured correctly. Without `LINKEDIN_JOBS_API_URL`, the LinkedIn adapter is skipped.
+
+**4. Browse** — filter by **LinkedIn** in the UI, or set `?source=linkedin` in the URL. Apply links open LinkedIn in a new tab.
+
+> **Note:** This uses an unofficial LinkedIn scraper (Puppeteer). It may break if LinkedIn changes their site, and job descriptions are not stored in the POC. Use responsibly.
 
 ### Database
 
@@ -131,6 +179,9 @@ See [`docs/`](docs/) for architecture details — especially [job ingestion](./d
 ## Environment
 
 - **Backend:** create `backend/.env` with at least `DATABASE_URL` and `CORS_ORIGINS` (defaults in root [`.env.example`](.env.example)).
+- **Jobicy (optional):** no API key. Uncomment filters in `.env.example` to narrow remote listings, e.g. `JOBICY_GEO=singapore`, `JOBICY_INDUSTRY=engineering`, `JOBICY_TAG=python`.
+- **Adzuna (optional):** `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` — [docs/adzuna-setup.md](docs/adzuna-setup.md).
+- **LinkedIn (optional):** `LINKEDIN_JOBS_API_URL` plus search params — requires the self-hosted [LinkedIn Jobs API](https://github.com/atharv01h/Linkedin-Jobs-Api) scraper. See [LinkedIn setup](#linkedin-optional) and [docs/README.md](docs/README.md#linkedin).
 - **Frontend:** optional `frontend/.env` — leave `VITE_API_BASE_URL` empty so requests use the Vite `/api` proxy in dev.
 
 ## Notes

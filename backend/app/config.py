@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     jobicy_geo: str = ""
     jobicy_industry: str = ""
     jobicy_tag: str = ""
+    linkedin_jobs_api_url: str = ""
+    linkedin_keywords: str = ""
+    linkedin_location: str = "Singapore"
+    linkedin_date_since_posted: str = "past_week"
+    linkedin_page_size: int = 25
 
 
 settings = Settings()

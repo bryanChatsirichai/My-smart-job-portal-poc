@@ -32,6 +32,8 @@ export function FilterPanel({
           <option value="">All sources</option>
           <option value="mycareersfuture">MyCareersFuture</option>
           <option value="adzuna">Adzuna</option>
+          <option value="jobicy">Jobicy</option>
+          <option value="linkedin">LinkedIn</option>
         </select>
       </label>
       <label>

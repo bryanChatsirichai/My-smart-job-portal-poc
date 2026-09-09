@@ -1,6 +1,8 @@
 export const SOURCE_DISPLAY_NAMES: Record<string, string> = {
   mycareersfuture: 'MyCareersFuture',
   adzuna: 'Adzuna',
+  jobicy: 'Jobicy',
+  linkedin: 'LinkedIn',
   jobstreet: 'JobStreet',
   indeed: 'Indeed',
 };
