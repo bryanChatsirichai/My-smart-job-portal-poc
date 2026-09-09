@@ -1,25 +1,64 @@
+"""Application settings.
+
+Values are resolved when ``settings = Settings()`` runs at import time.
+
+Priority (highest wins):
+  1. Default on each field below
+  2. ``backend/.env`` — loaded because ``env_file=".env"`` (relative to process cwd)
+  3. OS environment variables
+
+Field names map to env vars automatically: ``adzuna_app_key`` → ``ADZUNA_APP_KEY``.
+"""
+
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    # BaseSettings maps each field name to an env var automatically:
+    #   snake_case field → UPPER_SNAKE_CASE env var (e.g. adzuna_app_key → ADZUNA_APP_KEY).
+    # Field() only sets defaults/descriptions; it does not wire the env name.
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
-    database_url: str = "sqlite:///./jobportal.db"
-    cors_origins: str = "http://localhost:5173"
-    sync_cron_schedule: str = "0 2 * * *"
-    mcf_page_size: int = 100
-    adzuna_page_size: int = 50
-    jobicy_page_size: int = 200
-    adzuna_app_id: str = ""
-    adzuna_app_key: str = ""
-    jobicy_geo: str = ""
-    jobicy_industry: str = ""
-    jobicy_tag: str = ""
-    linkedin_jobs_api_url: str = ""
-    linkedin_keywords: str = ""
-    linkedin_location: str = "Singapore"
-    linkedin_date_since_posted: str = "past_week"
-    linkedin_page_size: int = 25
+    # --- Core (defaults are enough for local dev) ---
+    database_url: str = "sqlite:///./jobportal.db"  # DATABASE_URL
+    cors_origins: str = "http://localhost:5173"  # CORS_ORIGINS
+    sync_cron_schedule: str = "0 2 * * *"  # SYNC_CRON_SCHEDULE
+
+    # --- Sync page sizes ---
+    mcf_page_size: int = 100  # MCF_PAGE_SIZE
+    adzuna_page_size: int = 50  # ADZUNA_PAGE_SIZE
+    jobicy_page_size: int = 200  # JOBICY_PAGE_SIZE
+    linkedin_page_size: int = 25  # LINKEDIN_PAGE_SIZE
+
+    # --- Adzuna (optional) ---
+    # Default "" disables Adzuna; set ADZUNA_APP_ID and ADZUNA_APP_KEY in backend/.env to enable sync.
+    adzuna_app_id: str = Field(  # ADZUNA_APP_ID
+        default="",
+        description="Env ADZUNA_APP_ID. Empty = Adzuna adapter skipped.",
+    )
+    adzuna_app_key: str = Field(  # ADZUNA_APP_KEY
+        default="",
+        description="Env ADZUNA_APP_KEY. Empty = Adzuna adapter skipped.",
+    )
+
+    # --- Jobicy filters (optional) ---
+    jobicy_geo: str = Field(default="", description="Env JOBICY_GEO")  # JOBICY_GEO
+    jobicy_industry: str = Field(default="", description="Env JOBICY_INDUSTRY")  # JOBICY_INDUSTRY
+    jobicy_tag: str = Field(default="", description="Env JOBICY_TAG")  # JOBICY_TAG
+
+    # --- LinkedIn scraper (optional) ---
+    linkedin_jobs_api_url: str = Field(  # LINKEDIN_JOBS_API_URL
+        default="",
+        description="Env LINKEDIN_JOBS_API_URL. Empty = LinkedIn adapter skipped.",
+    )
+    linkedin_keywords: str = Field(default="", description="Env LINKEDIN_KEYWORDS")  # LINKEDIN_KEYWORDS
+    linkedin_location: str = "Singapore"  # LINKEDIN_LOCATION
+    linkedin_date_since_posted: str = "past_week"  # LINKEDIN_DATE_SINCE_POSTED
 
 
 settings = Settings()
