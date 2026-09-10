@@ -12,7 +12,7 @@ Remote job listings via the **public Jobicy API**. No API key or account require
 
 No credentials needed. Jobicy is **always registered**.
 
-Optional filters in `backend/.env` (see [`.env.example`](../../.env.example)):
+Optional filters in `backend/.env` (see [`backend/.env.example`](../../backend/.env.example)):
 
 ```env
 # JOBICY_GEO=singapore

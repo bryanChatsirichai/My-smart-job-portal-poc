@@ -1,4 +1,16 @@
+"""Job sync orchestration.
+
+Pulls listings from enabled ``JobSourceAdapter`` instances, normalizes each
+record into ``CanonicalJobInput``, and upserts into the database. After a
+full source sync, jobs that were not seen during the run are marked expired.
+
+Entry points:
+  - ``sync_all`` — run every registered adapter (scheduler / CLI).
+  - ``sync_source`` — sync a single adapter (testing or targeted runs).
+"""
+
 import logging
+from typing import TypedDict
 
 from app.adapters.adzuna.adapter import AdzunaAdapter
 from app.adapters.base import FetchParams, JobSourceAdapter
@@ -11,34 +23,129 @@ from app.db.upsert import expire_stale_jobs, upsert_job
 
 logger = logging.getLogger(__name__)
 
+# Per-source batch size; must align with each adapter's pagination semantics.
+_PAGE_SIZE_BY_SOURCE: dict[str, int] = {
+    "adzuna": settings.adzuna_page_size,
+    "jobicy": settings.jobicy_page_size,
+    "linkedin": settings.linkedin_page_size,
+    "mycareersfuture": settings.mcf_page_size,
+}
+
+
+class SyncResult(TypedDict, total=False):
+    """Summary returned by ``sync_source`` / ``sync_all``."""
+
+    source: str
+    fetched: int
+    upserted: int
+    expired: int
+    skipped: str
+    error: str
+
 
 def get_adapters() -> list[JobSourceAdapter]:
-    adapters: list[JobSourceAdapter] = [
-        MyCareersFutureAdapter(),
-        JobicyAdapter(),
-    ]
-    if AdzunaAdapter.is_configured():
-        adapters.append(AdzunaAdapter())
-    else:
-        logger.info("Adzuna adapter not registered (set ADZUNA_APP_ID and ADZUNA_APP_KEY)")
-    if LinkedInAdapter.is_configured():
-        adapters.append(LinkedInAdapter())
-    else:
-        logger.info("LinkedIn adapter not registered (set LINKEDIN_JOBS_API_URL)")
+    """Build the list of adapters to run based on feature flags and credentials.
+
+    Toggle-only sources (MCF, Jobicy) register when ``*_ENABLED`` is true.
+    Credential-gated sources (Adzuna, LinkedIn) also require API settings.
+    """
+    adapters: list[JobSourceAdapter] = []
+
+    _register_toggle(
+        adapters,
+        enabled=settings.mcf_enabled,
+        adapter_cls=MyCareersFutureAdapter,
+        label="MyCareersFuture",
+        env_flag="MCF_ENABLED",
+    )
+    _register_toggle(
+        adapters,
+        enabled=settings.jobicy_enabled,
+        adapter_cls=JobicyAdapter,
+        label="Jobicy",
+        env_flag="JOBICY_ENABLED",
+    )
+    _register_credential_gated(
+        adapters,
+        enabled=settings.adzuna_enabled,
+        adapter_cls=AdzunaAdapter,
+        label="Adzuna",
+        env_flag="ADZUNA_ENABLED",
+        missing_config_hint="set ADZUNA_APP_ID and ADZUNA_APP_KEY",
+    )
+    _register_credential_gated(
+        adapters,
+        enabled=settings.linkedin_enabled,
+        adapter_cls=LinkedInAdapter,
+        label="LinkedIn",
+        env_flag="LINKEDIN_ENABLED",
+        missing_config_hint="set LINKEDIN_JOBS_API_URL",
+    )
     return adapters
 
 
+def _register_toggle(
+    adapters: list[JobSourceAdapter],
+    *,
+    enabled: bool,
+    adapter_cls: type[JobSourceAdapter],
+    label: str,
+    env_flag: str,
+) -> None:
+    if enabled:
+        adapters.append(adapter_cls())
+    else:
+        logger.info("%s adapter disabled (%s=false)", label, env_flag)
+
+
+def _register_credential_gated(
+    adapters: list[JobSourceAdapter],
+    *,
+    enabled: bool,
+    adapter_cls: type[JobSourceAdapter],
+    label: str,
+    env_flag: str,
+    missing_config_hint: str,
+) -> None:
+    if adapter_cls.is_configured():
+        adapters.append(adapter_cls())
+    elif enabled:
+        logger.info("%s adapter not registered (%s)", label, missing_config_hint)
+    else:
+        logger.info("%s adapter disabled (%s=false)", label, env_flag)
+
+
 def _page_size(adapter: JobSourceAdapter) -> int:
-    if adapter.source_name == "adzuna":
-        return settings.adzuna_page_size
-    if adapter.source_name == "jobicy":
-        return settings.jobicy_page_size
-    if adapter.source_name == "linkedin":
-        return settings.linkedin_page_size
-    return settings.mcf_page_size
+    """Return the configured fetch batch size for a source."""
+    return _PAGE_SIZE_BY_SOURCE.get(adapter.source_name, settings.mcf_page_size)
 
 
-async def sync_source(adapter: JobSourceAdapter, max_pages: int | None = None) -> dict[str, int | str]:
+def _upsert_batch(adapter: JobSourceAdapter, raw_jobs: list[dict], seen_ids: set[str]) -> int:
+    """Normalize and persist one page of raw jobs; track IDs seen this run."""
+    db = SessionLocal()
+    upserted = 0
+    try:
+        for raw in raw_jobs:
+            normalized = adapter.normalize(raw)
+            upsert_job(db, normalized)
+            seen_ids.add(normalized.source_job_id)
+            upserted += 1
+    finally:
+        db.close()
+    return upserted
+
+
+async def sync_source(adapter: JobSourceAdapter, max_pages: int | None = None) -> SyncResult:
+    """Fetch, normalize, and upsert all pages for one job source.
+
+    Paginates until the adapter returns an empty page, a short page (fewer
+    results than ``limit``), or ``max_pages`` is reached. Jobs active in the
+    DB but absent from this run are marked expired afterward.
+
+    Returns a ``skipped`` result when called directly with an unconfigured
+    credential-gated adapter (defensive guard; ``get_adapters`` normally
+    omits those).
+    """
     if adapter.source_name == "adzuna" and not AdzunaAdapter.is_configured():
         return {"source": adapter.source_name, "skipped": "not_configured"}
     if adapter.source_name == "linkedin" and not LinkedInAdapter.is_configured():
@@ -61,16 +168,9 @@ async def sync_source(adapter: JobSourceAdapter, max_pages: int | None = None) -
             break
 
         fetched += len(raw_jobs)
-        db = SessionLocal()
-        try:
-            for raw in raw_jobs:
-                normalized = adapter.normalize(raw)
-                upsert_job(db, normalized)
-                seen_ids.add(normalized.source_job_id)
-                upserted += 1
-        finally:
-            db.close()
+        upserted += _upsert_batch(adapter, raw_jobs, seen_ids)
 
+        # A partial page means the upstream API has no more results.
         if len(raw_jobs) < page_size:
             break
         page += 1
@@ -81,13 +181,18 @@ async def sync_source(adapter: JobSourceAdapter, max_pages: int | None = None) -
     finally:
         db.close()
 
-    stats = {"fetched": fetched, "upserted": upserted, "expired": expired}
+    stats: SyncResult = {"fetched": fetched, "upserted": upserted, "expired": expired}
     logger.info("sync complete", extra={"source": adapter.source_name, **stats})
     return stats
 
 
-async def sync_all(max_pages: int | None = None) -> list[dict[str, int | str]]:
-    results: list[dict[str, int | str]] = []
+async def sync_all(max_pages: int | None = None) -> list[SyncResult]:
+    """Run ``sync_source`` for every registered adapter.
+
+    Failures are isolated per source — one adapter error does not block the
+    rest. Each result includes ``source`` plus stats or an ``error`` key.
+    """
+    results: list[SyncResult] = []
     for adapter in get_adapters():
         try:
             stats = await sync_source(adapter, max_pages=max_pages)

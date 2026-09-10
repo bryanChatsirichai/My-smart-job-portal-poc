@@ -175,8 +175,8 @@ See [`docs/`](docs/) for architecture details — especially [job ingestion](./d
 
 ## Environment
 
-- **Backend:** create `backend/.env` with at least `DATABASE_URL` and `CORS_ORIGINS` (defaults in root [`.env.example`](.env.example)).
-- **Jobicy (optional):** no API key. Uncomment filters in `.env.example` to narrow remote listings, e.g. `JOBICY_GEO=singapore`, `JOBICY_INDUSTRY=engineering`, `JOBICY_TAG=python`.
+- **Backend:** create `backend/.env` from [`backend/.env.example`](backend/.env.example). Toggle sources with `MCF_ENABLED`, `JOBICY_ENABLED`, `ADZUNA_ENABLED`, `LINKEDIN_ENABLED`; tune fetch size with `*_PAGE_SIZE`.
+- **Jobicy (optional):** no API key. Uncomment filters in `backend/.env.example` to narrow remote listings, e.g. `JOBICY_GEO=singapore`, `JOBICY_INDUSTRY=engineering`, `JOBICY_TAG=python`.
 - **Job sources:** [docs/adapters/](docs/adapters/) — setup and API reference per adapter.
 - **Frontend:** optional `frontend/.env` — leave `VITE_API_BASE_URL` empty so requests use the Vite `/api` proxy in dev.
 

@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173"  # CORS_ORIGINS
     sync_cron_schedule: str = "0 2 * * *"  # SYNC_CRON_SCHEDULE
 
+    # --- Adapter toggles (set *_ENABLED=false to skip sync for a source) ---
+    mcf_enabled: bool = True  # MCF_ENABLED
+    jobicy_enabled: bool = True  # JOBICY_ENABLED
+    adzuna_enabled: bool = True  # ADZUNA_ENABLED
+    linkedin_enabled: bool = True  # LINKEDIN_ENABLED
+
     # --- Sync page sizes ---
     mcf_page_size: int = 100  # MCF_PAGE_SIZE
     adzuna_page_size: int = 50  # ADZUNA_PAGE_SIZE
