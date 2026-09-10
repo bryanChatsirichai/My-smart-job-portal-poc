@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     mcf_page_size: int = 100  # MCF_PAGE_SIZE
     adzuna_page_size: int = 50  # ADZUNA_PAGE_SIZE
     jobicy_page_size: int = 200  # JOBICY_PAGE_SIZE
-    linkedin_page_size: int = 25  # LINKEDIN_PAGE_SIZE
+    linkedin_page_size: int = 70  # LINKEDIN_PAGE_SIZE
 
     # --- Adzuna (optional) ---
     # Default "" disables Adzuna; set ADZUNA_APP_ID and ADZUNA_APP_KEY in backend/.env to enable sync.
@@ -53,7 +53,7 @@ class Settings(BaseSettings):
 
     # --- LinkedIn scraper (optional) ---
     linkedin_jobs_api_url: str = Field(  # LINKEDIN_JOBS_API_URL
-        default="",
+        default="http://localhost:3000/api/v1",
         description="Env LINKEDIN_JOBS_API_URL. Empty = LinkedIn adapter skipped.",
     )
     linkedin_keywords: str = Field(default="", description="Env LINKEDIN_KEYWORDS")  # LINKEDIN_KEYWORDS

@@ -12,7 +12,6 @@ from app.models.schemas import CanonicalJobInput, LocationSchema
 
 logger = logging.getLogger(__name__)
 
-LINKEDIN_JOBS_PER_PAGE = 25
 _JOB_ID_PATTERN = re.compile(r"(?:view/|-)(\d+)")
 
 
@@ -31,23 +30,33 @@ class LinkedInAdapter(JobSourceAdapter):
             return []
 
         page = params.page + 1  # API pages are 1-based
-        query: dict[str, str | int] = {"page": page}
+        query: dict[str, str | int] = {
+            "page": page,
+            "location": settings.linkedin_location,
+        }
         if settings.linkedin_keywords:
             query["keywords"] = settings.linkedin_keywords
-        if settings.linkedin_location:
-            query["location"] = settings.linkedin_location
         if settings.linkedin_date_since_posted:
             query["dateSincePosted"] = settings.linkedin_date_since_posted
 
         base_url = settings.linkedin_jobs_api_url.rstrip("/")
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            response = await client.get(f"{base_url}/jobs/search", params=query)
-            response.raise_for_status()
-            data = response.json()
-            if not data.get("success", True):
-                logger.warning("LinkedIn Jobs API returned success=false")
-                return []
-            return data.get("jobs", [])
+        url = f"{base_url}/jobs/search"
+        logger.info("LinkedIn Jobs API request: %s params=%s", url, query)
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                response = await client.get(url, params=query)
+                response.raise_for_status()
+                data = response.json()
+        except httpx.HTTPError as exc:
+            logger.warning("LinkedIn Jobs API request failed (page=%s): %s", page, exc)
+            return []
+
+        if not data.get("success", True):
+            logger.warning("LinkedIn Jobs API returned success=false (page=%s)", page)
+            return []
+        jobs = data.get("jobs", [])
+        logger.info("LinkedIn Jobs API page %s returned %s jobs", page, len(jobs))
+        return jobs
 
     def normalize(self, raw: dict) -> CanonicalJobInput:
         link = raw.get("link") or ""

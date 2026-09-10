@@ -25,23 +25,23 @@ API: **http://localhost:3000** · Docs: http://localhost:3000/api/v1/docs
 
 ### 2. Configure the portal backend
 
-Add to `backend/.env`:
+Optional overrides in `backend/.env`:
 
 ```env
-LINKEDIN_JOBS_API_URL=http://localhost:3000/api/v1
-LINKEDIN_KEYWORDS=software engineer
-LINKEDIN_LOCATION=Singapore
-LINKEDIN_DATE_SINCE_POSTED=past_week
+# LINKEDIN_JOBS_API_URL=http://localhost:3000/api/v1
+# LINKEDIN_KEYWORDS=software engineer
+# LINKEDIN_LOCATION=Singapore
+# LINKEDIN_DATE_SINCE_POSTED=past_week
 ```
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `LINKEDIN_JOBS_API_URL` | Yes | — | Scraper base URL including `/api/v1` |
+| `LINKEDIN_JOBS_API_URL` | No | `http://localhost:3000/api/v1` | Scraper base URL including `/api/v1` |
 | `LINKEDIN_KEYWORDS` | No | `""` | Search keywords |
 | `LINKEDIN_LOCATION` | No | `Singapore` | Location filter |
 | `LINKEDIN_DATE_SINCE_POSTED` | No | `past_week` | `past_24h`, `past_week`, or `past_month` |
 
-The adapter is **not registered** if `LINKEDIN_JOBS_API_URL` is unset.
+Set `LINKEDIN_JOBS_API_URL=` (empty) to disable the adapter.
 
 ### 3. Sync
 
@@ -55,15 +55,16 @@ The scraper must be reachable. Sync uses a **120 second** HTTP timeout per page.
 ## API
 
 ```http
-GET {LINKEDIN_JOBS_API_URL}/jobs/search?page={page}&keywords=...&location=...&dateSincePosted=...
+GET http://localhost:3000/api/v1/jobs/search?location=Singapore&page=1
+GET http://localhost:3000/api/v1/jobs/search?location=Singapore&page=2
 ```
 
 | Parameter | Description |
 |-----------|-------------|
-| `page` | **1-based** page number |
-| `keywords` | From `LINKEDIN_KEYWORDS` |
-| `location` | From `LINKEDIN_LOCATION` |
-| `dateSincePosted` | From `LINKEDIN_DATE_SINCE_POSTED` |
+| `page` | **1-based** page number (`--max-pages 2` → pages 1 and 2) |
+| `location` | From `LINKEDIN_LOCATION` (default `Singapore`) |
+| `keywords` | Optional, from `LINKEDIN_KEYWORDS` |
+| `dateSincePosted` | Optional, from `LINKEDIN_DATE_SINCE_POSTED` |
 
 ### Response
 
@@ -73,14 +74,14 @@ JSON with `jobs` array (and `success` flag).
 
 | Setting | Location | Default |
 |---------|----------|---------|
-| API URL | `linkedin_jobs_api_url` / `LINKEDIN_JOBS_API_URL` | `""` (disabled) |
-| Page size | `linkedin_page_size` / `LINKEDIN_PAGE_SIZE` | `25` |
+| API URL | `linkedin_jobs_api_url` / `LINKEDIN_JOBS_API_URL` | `http://localhost:3000/api/v1` |
+| Page size | `linkedin_page_size` / `LINKEDIN_PAGE_SIZE` | `70` |
 
 ## Pagination
 
 | Mode | Pages | Approx. jobs |
 |------|-------|--------------|
-| `--max-pages 2` | 2 | up to **~50** (2 × 25) |
+| `--max-pages 2` | 2 | up to **~140** (2 × 70) |
 | Full `--sync` | all | until scraper returns no more |
 
 ## Data mapping
@@ -111,7 +112,7 @@ Job descriptions are **not** stored (search endpoint does not return them). Sala
 
 - **Unofficial** — LinkedIn may block scraping; reliability not guaranteed.
 - **Sync-time only** — UI reads from SQLite after sync.
-- **Opt-in** — omit `LINKEDIN_JOBS_API_URL` to disable.
+- **Enabled by default** — points at `http://localhost:3000/api/v1`; set `LINKEDIN_JOBS_API_URL=` to disable.
 - Use in line with LinkedIn's terms and applicable law.
 
 See also: [job-ingestion-architecture.md](../job-ingestion-architecture.md)

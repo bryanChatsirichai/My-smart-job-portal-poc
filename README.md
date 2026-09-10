@@ -31,7 +31,7 @@ Create `backend/.env` if needed (see [Environment](#environment) below).
 | `--init-db` | Creates SQLite tables in `jobportal.db` (run once, or after a DB/schema change) |
 | `--sync --max-pages 2` | Fetches up to 2 **pages per source** into SQLite (see [Refreshing job data](#refreshing-job-data)) |
 
-**Job sources:** see [docs/adapters/](docs/adapters/) — MyCareersFuture and Jobicy need no API keys; Adzuna needs `ADZUNA_APP_ID` and `ADZUNA_APP_KEY`; LinkedIn needs a self-hosted scraper (`LINKEDIN_JOBS_API_URL`). Quick links: [MCF](docs/adapters/mycareersfuture.md) · [Jobicy](docs/adapters/jobicy.md) · [Adzuna](docs/adapters/adzuna.md) · [LinkedIn](docs/adapters/linkedin.md).
+**Job sources:** see [docs/adapters/](docs/adapters/) — MyCareersFuture and Jobicy need no API keys; Adzuna needs `ADZUNA_APP_ID` and `ADZUNA_APP_KEY`; LinkedIn needs a self-hosted scraper on `localhost:3000` (enabled by default). Quick links: [MCF](docs/adapters/mycareersfuture.md) · [Jobicy](docs/adapters/jobicy.md) · [Adzuna](docs/adapters/adzuna.md) · [LinkedIn](docs/adapters/linkedin.md).
 
 **2. Frontend**
 
@@ -96,7 +96,7 @@ uv run python -m app.worker --sync
 | MyCareersFuture | 100 | up to ~200 jobs |
 | Jobicy | 200 | `--max-pages 1` → 100 jobs; `2` or default → 200 (API max) |
 | Adzuna | 50 | up to ~100 jobs |
-| LinkedIn | 25 | up to ~50 jobs (requires self-hosted scraper; see `.env.example`) |
+| LinkedIn | 70 | up to ~140 jobs (requires self-hosted scraper on `localhost:3000`) |
 
 Use `--max-pages 2` for fast local testing; use full `--sync` when you want a complete dataset.
 
@@ -119,21 +119,16 @@ npm run dev --workspace=backend   # listens on http://localhost:3000
 
 Swagger docs: http://localhost:3000/api/v1/docs
 
-**2. Configure the portal backend** — add to `backend/.env`:
+**2. Configure the portal backend (optional)** — defaults work for local dev:
 
-```env
-LINKEDIN_JOBS_API_URL=http://localhost:3000/api/v1
-LINKEDIN_KEYWORDS=software engineer
-LINKEDIN_LOCATION=Singapore
-LINKEDIN_DATE_SINCE_POSTED=past_week
-```
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `LINKEDIN_JOBS_API_URL` | `http://localhost:3000/api/v1` | Scraper API base URL |
+| `LINKEDIN_LOCATION` | `Singapore` | Location filter |
+| `LINKEDIN_KEYWORDS` | `""` | Optional search keywords |
+| `LINKEDIN_DATE_SINCE_POSTED` | `past_week` | `past_24h`, `past_week`, or `past_month` |
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `LINKEDIN_JOBS_API_URL` | Yes | Base URL of the scraper API (must include `/api/v1`) |
-| `LINKEDIN_KEYWORDS` | No | Search keywords passed to LinkedIn |
-| `LINKEDIN_LOCATION` | No | Location filter (default: `Singapore`) |
-| `LINKEDIN_DATE_SINCE_POSTED` | No | `past_24h`, `past_week`, or `past_month` (default: `past_week`) |
+Set `LINKEDIN_JOBS_API_URL=` in `backend/.env` to disable LinkedIn sync.
 
 **3. Sync** (scraper must be running):
 
@@ -142,7 +137,7 @@ cd backend
 uv run python -m app.worker --sync --max-pages 2
 ```
 
-Expected output includes a `linkedin` entry when configured correctly. Without `LINKEDIN_JOBS_API_URL`, the LinkedIn adapter is skipped.
+Expected output includes a `linkedin` entry (e.g. `fetched: 140` with `--max-pages 2`). The adapter calls `GET /jobs/search?location=Singapore&page=1` then `page=2`.
 
 **4. Browse** — filter by **LinkedIn** in the UI, or set `?source=linkedin` in the URL. Apply links open LinkedIn in a new tab.
 
