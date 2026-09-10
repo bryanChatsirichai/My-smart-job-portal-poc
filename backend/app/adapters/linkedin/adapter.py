@@ -1,35 +1,45 @@
+"""LinkedIn jobs adapter via self-hosted LinkedIn Jobs API.
+
+Wraps: https://github.com/atharv01h/Linkedin-Jobs-Api
+
+Requires ``LINKEDIN_JOBS_API_URL`` pointing at a running instance. Search
+filters (location, keywords, recency) come from application settings. The
+upstream API uses 1-based pages; this adapter accepts 0-based ``FetchParams``.
+"""
+
 import logging
 import re
-from datetime import datetime, timezone
-from decimal import Decimal
 from urllib.parse import urlparse
 
 import httpx
 
 from app.adapters.base import FetchParams, JobSourceAdapter
+from app.adapters.utils import normalize_salary_period, parse_datetime, to_decimal
 from app.config import settings
 from app.models.schemas import CanonicalJobInput, LocationSchema
 
 logger = logging.getLogger(__name__)
 
+# Matches numeric IDs in URLs like /jobs/view/12345 or /jobs/view-12345.
 _JOB_ID_PATTERN = re.compile(r"(?:view/|-)(\d+)")
 
 
 class LinkedInAdapter(JobSourceAdapter):
-    """LinkedIn jobs via self-hosted LinkedIn Jobs API — https://github.com/atharv01h/Linkedin-Jobs-Api"""
+    """Fetches job listings from a self-hosted LinkedIn Jobs API service."""
 
     source_name = "linkedin"
 
     @staticmethod
     def is_configured() -> bool:
-        return bool(settings.linkedin_jobs_api_url.strip())
+        """Return True when the adapter is enabled and the API base URL is set."""
+        return settings.linkedin_enabled and bool(settings.linkedin_jobs_api_url.strip())
 
     async def fetch_jobs(self, params: FetchParams) -> list[dict]:
         if not self.is_configured():
             logger.warning("LinkedIn Jobs API URL not set; skip sync for source=linkedin")
             return []
 
-        page = params.page + 1  # API pages are 1-based
+        page = params.page + 1
         query: dict[str, str | int] = {
             "page": page,
             "location": settings.linkedin_location,
@@ -54,16 +64,20 @@ class LinkedInAdapter(JobSourceAdapter):
         if not data.get("success", True):
             logger.warning("LinkedIn Jobs API returned success=false (page=%s)", page)
             return []
+
         jobs = data.get("jobs", [])
         logger.info("LinkedIn Jobs API page %s returned %s jobs", page, len(jobs))
         return jobs
 
     def normalize(self, raw: dict) -> CanonicalJobInput:
+        """Map a LinkedIn Jobs API record to ``CanonicalJobInput``."""
         link = raw.get("link") or ""
         source_job_id = raw.get("id") or _extract_job_id(link) or link
 
+        # Salary, seniority, and employment metadata live under ``insights``.
         insights = raw.get("insights") or {}
         salary = insights.get("salaryRange") or {}
+
         seniority = insights.get("seniorityLevel")
         if seniority == "unknown":
             seniority = None
@@ -88,15 +102,15 @@ class LinkedInAdapter(JobSourceAdapter):
                 district=None,
                 region=location_text or None,
             ),
-            salary_min=_to_decimal(salary.get("min")),
-            salary_max=_to_decimal(salary.get("max")),
+            salary_min=to_decimal(salary.get("min")),
+            salary_max=to_decimal(salary.get("max")),
             salary_currency=salary.get("currency"),
-            salary_period=_normalize_period(salary.get("period")),
+            salary_period=normalize_salary_period(salary.get("period")),
             employment_type=employment_type,
             seniority_level=seniority,
             skills=skills,
             description=None,
-            posted_date=_parse_date(raw.get("listDate")),
+            posted_date=parse_datetime(raw.get("listDate")),
             expiry_date=None,
             apply_url=link or f"https://www.linkedin.com/jobs/view/{source_job_id}",
             raw_payload=raw,
@@ -104,6 +118,7 @@ class LinkedInAdapter(JobSourceAdapter):
 
 
 def _extract_job_id(link: str) -> str | None:
+    """Derive a stable job ID from a LinkedIn job URL when ``id`` is absent."""
     if not link:
         return None
     match = _JOB_ID_PATTERN.search(link)
@@ -113,26 +128,3 @@ def _extract_job_id(link: str) -> str | None:
     if path:
         return path.split("/")[-1]
     return None
-
-
-def _parse_date(value: str | None) -> datetime:
-    if not value:
-        return datetime.now(timezone.utc)
-    try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
-    except ValueError:
-        return datetime.now(timezone.utc)
-
-
-def _to_decimal(value: object | None) -> Decimal | None:
-    if value is None:
-        return None
-    return Decimal(str(value))
-
-
-def _normalize_period(value: str | None) -> str | None:
-    if not value or value == "unknown":
-        return None
-    if value == "yearly":
-        return "annual"
-    return value

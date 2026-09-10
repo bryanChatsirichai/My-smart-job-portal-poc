@@ -1,16 +1,25 @@
-from datetime import datetime, timezone
-from decimal import Decimal
+"""MyCareersFuture Singapore government jobs adapter.
+
+API docs: https://api.mycareersfuture.gov.sg/v2/docs
+Endpoint: ``GET /v2/jobs``
+
+Public API with standard 0-based pagination via ``limit`` and ``page``.
+No authentication required. Provides the richest local metadata (UEN,
+structured address, official expiry dates).
+"""
 
 import httpx
 
 from app.adapters.base import FetchParams, JobSourceAdapter
-from app.config import settings
+from app.adapters.utils import normalize_salary_period, parse_datetime, to_decimal
 from app.models.schemas import CanonicalJobInput, LocationSchema
 
 MCF_BASE_URL = "https://api.mycareersfuture.gov.sg/v2/jobs"
 
 
 class MyCareersFutureAdapter(JobSourceAdapter):
+    """Fetches job listings from Singapore's MyCareersFuture portal API."""
+
     source_name = "mycareersfuture"
 
     async def fetch_jobs(self, params: FetchParams) -> list[dict]:
@@ -24,6 +33,8 @@ class MyCareersFutureAdapter(JobSourceAdapter):
             return data.get("results", [])
 
     def normalize(self, raw: dict) -> CanonicalJobInput:
+        """Map a MyCareersFuture job record to ``CanonicalJobInput``."""
+        # ``postedCompany`` is the listing entity; ``hiringCompany`` may differ for agencies.
         company = raw.get("postedCompany") or raw.get("hiringCompany") or {}
         address = raw.get("address") or {}
         districts = address.get("districts") or []
@@ -45,8 +56,9 @@ class MyCareersFutureAdapter(JobSourceAdapter):
         position_levels = raw.get("positionLevels") or []
         skills = [skill.get("skill") for skill in raw.get("skills") or [] if skill.get("skill")]
 
-        posted_date = _parse_date(metadata.get("newPostingDate") or metadata.get("originalPostingDate"))
-        expiry_date = _parse_date(metadata.get("expiryDate"))
+        # Prefer the latest repost date when a listing is refreshed.
+        posted_date = parse_datetime(metadata.get("newPostingDate") or metadata.get("originalPostingDate"))
+        expiry_date = parse_datetime(metadata.get("expiryDate"))
 
         return CanonicalJobInput(
             source=self.source_name,
@@ -59,10 +71,10 @@ class MyCareersFutureAdapter(JobSourceAdapter):
                 district=district,
                 region=region,
             ),
-            salary_min=_to_decimal(salary.get("minimum")),
-            salary_max=_to_decimal(salary.get("maximum")),
+            salary_min=to_decimal(salary.get("minimum")),
+            salary_max=to_decimal(salary.get("maximum")),
             salary_currency="SGD",
-            salary_period=_normalize_period(salary_type),
+            salary_period=normalize_salary_period(salary_type),
             employment_type=employment_types[0].get("employmentType") if employment_types else None,
             seniority_level=position_levels[0].get("position") if position_levels else None,
             skills=skills,
@@ -73,23 +85,3 @@ class MyCareersFutureAdapter(JobSourceAdapter):
             or f"https://www.mycareersfuture.gov.sg/job/{raw['uuid']}",
             raw_payload=raw,
         )
-
-
-def _parse_date(value: str | None) -> datetime:
-    if not value:
-        return datetime.now(timezone.utc)
-    if "T" in value:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
-    return datetime.fromisoformat(f"{value}T00:00:00+00:00")
-
-
-def _to_decimal(value: object | None) -> Decimal | None:
-    if value is None:
-        return None
-    return Decimal(str(value))
-
-
-def _normalize_period(value: str | None) -> str | None:
-    if not value:
-        return None
-    return value.lower()

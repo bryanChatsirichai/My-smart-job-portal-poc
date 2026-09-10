@@ -1,10 +1,18 @@
+"""Adzuna job search adapter (Singapore).
+
+API docs: https://developer.adzuna.com
+Endpoint: ``GET /v1/api/jobs/sg/search/{page}``
+
+Requires ``ADZUNA_APP_ID`` and ``ADZUNA_APP_KEY``. Pages are 1-based on the
+Adzuna side; this adapter accepts 0-based ``FetchParams.page`` and translates.
+"""
+
 import logging
-from datetime import datetime, timezone
-from decimal import Decimal
 
 import httpx
 
 from app.adapters.base import FetchParams, JobSourceAdapter
+from app.adapters.utils import parse_datetime, title_case_snake, to_decimal
 from app.config import settings
 from app.models.schemas import CanonicalJobInput, LocationSchema
 
@@ -14,20 +22,22 @@ ADZUNA_BASE_URL = "https://api.adzuna.com/v1/api/jobs/sg/search"
 
 
 class AdzunaAdapter(JobSourceAdapter):
-    """Adzuna job search API — https://developer.adzuna.com (Singapore: /jobs/sg/)."""
+    """Fetches Singapore listings from the Adzuna Job Search API."""
 
     source_name = "adzuna"
 
     @staticmethod
     def is_configured() -> bool:
-        return bool(settings.adzuna_app_id and settings.adzuna_app_key)
+        """Return True when the adapter is enabled and API credentials are set."""
+        return settings.adzuna_enabled and bool(settings.adzuna_app_id and settings.adzuna_app_key)
 
     async def fetch_jobs(self, params: FetchParams) -> list[dict]:
         if not self.is_configured():
             logger.warning("Adzuna API credentials not set; skip sync for source=adzuna")
             return []
 
-        page = params.page + 1  # Adzuna pages are 1-based
+        # Adzuna page numbers start at 1; sync worker passes 0-based indices.
+        page = params.page + 1
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.get(
                 f"{ADZUNA_BASE_URL}/{page}",
@@ -43,22 +53,23 @@ class AdzunaAdapter(JobSourceAdapter):
             return data.get("results", [])
 
     def normalize(self, raw: dict) -> CanonicalJobInput:
+        """Map an Adzuna search result object to ``CanonicalJobInput``."""
         location = raw.get("location") or {}
         area = location.get("area") or []
         company = raw.get("company") or {}
 
+        # ``area`` is a hierarchy (country → region → city); use first/last for region/district.
         region = area[0] if area else None
         district = location.get("display_name") or (area[-1] if area else None)
 
-        contract_time = raw.get("contract_time")
-        employment_type = _format_contract_time(contract_time) or _format_contract_type(
+        # Prefer contract_time (full_time, part_time); fall back to contract_type (permanent, contract).
+        employment_type = title_case_snake(raw.get("contract_time")) or title_case_snake(
             raw.get("contract_type")
         )
 
         category = raw.get("category") or {}
         skills = [category.get("label")] if category.get("label") else []
 
-        posted_date = _parse_date(raw.get("created"))
         apply_url = raw.get("redirect_url") or f"https://www.adzuna.sg/details/{raw.get('id')}"
 
         return CanonicalJobInput(
@@ -74,40 +85,16 @@ class AdzunaAdapter(JobSourceAdapter):
                 lat=raw.get("latitude"),
                 lng=raw.get("longitude"),
             ),
-            salary_min=_to_decimal(raw.get("salary_min")),
-            salary_max=_to_decimal(raw.get("salary_max")),
+            salary_min=to_decimal(raw.get("salary_min")),
+            salary_max=to_decimal(raw.get("salary_max")),
             salary_currency="SGD",
             salary_period="annual",
             employment_type=employment_type,
             seniority_level=None,
             skills=skills,
             description=raw.get("description"),
-            posted_date=posted_date,
+            posted_date=parse_datetime(raw.get("created")),
             expiry_date=None,
             apply_url=apply_url,
             raw_payload=raw,
         )
-
-
-def _parse_date(value: str | None) -> datetime:
-    if not value:
-        return datetime.now(timezone.utc)
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
-
-
-def _to_decimal(value: object | None) -> Decimal | None:
-    if value is None:
-        return None
-    return Decimal(str(value))
-
-
-def _format_contract_time(value: str | None) -> str | None:
-    if not value:
-        return None
-    return value.replace("_", " ").title()
-
-
-def _format_contract_type(value: str | None) -> str | None:
-    if not value:
-        return None
-    return value.replace("_", " ").title()
