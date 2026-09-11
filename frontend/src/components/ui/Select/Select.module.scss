@@ -1,0 +1,32 @@
+@use '../../../styles/variables' as *;
+
+.select {
+  width: 100%;
+  min-height: 44px;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-divider;
+  border-radius: $radius-md;
+  background: $color-surface;
+  color: $color-ink;
+  font-size: $font-size-meta;
+  cursor: pointer;
+  transition:
+    border-color $duration-normal $ease-standard,
+    box-shadow $duration-normal $ease-standard;
+
+  &:hover:not(:disabled) {
+    border-color: darken($color-divider, 6%);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-signal;
+    box-shadow: 0 0 0 3px rgba($color-signal, 0.15);
+  }
+
+  &:disabled {
+    background: $color-mist;
+    color: $color-fog;
+    cursor: not-allowed;
+  }
+}

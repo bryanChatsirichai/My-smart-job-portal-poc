@@ -1,0 +1,68 @@
+@use '../../../styles/variables' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  min-height: 44px;
+  padding: 0 $space-4;
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-meta;
+  line-height: $line-height-tight;
+  cursor: pointer;
+  transition:
+    background-color $duration-normal $ease-standard,
+    border-color $duration-normal $ease-standard,
+    color $duration-normal $ease-standard;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.primary {
+  background: $color-signal;
+  border-color: $color-signal;
+  color: $color-surface;
+
+  &:hover:not(:disabled) {
+    background: $color-signal-dark;
+    border-color: $color-signal-dark;
+  }
+}
+
+.secondary {
+  background: $color-surface;
+  border-color: $color-divider;
+  color: $color-ink;
+
+  &:hover:not(:disabled) {
+    border-color: $color-harbor;
+    color: $color-harbor;
+  }
+}
+
+.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: $color-harbor;
+
+  &:hover:not(:disabled) {
+    background: rgba($color-harbor, 0.08);
+  }
+}
+
+.danger {
+  background: $color-surface;
+  border-color: $color-divider;
+  color: $status-rejected;
+
+  &:hover:not(:disabled) {
+    background: rgba($status-rejected, 0.06);
+    border-color: $status-rejected;
+  }
+}

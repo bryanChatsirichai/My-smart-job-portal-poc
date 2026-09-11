@@ -1,0 +1,27 @@
+@use '../../../styles/variables' as *;
+
+.card {
+  background: $color-surface;
+  border-radius: $radius-md;
+}
+
+.flat {
+  border: 1px solid $color-divider;
+}
+
+.elevated {
+  border: 1px solid $color-divider;
+  box-shadow: $shadow-sm;
+}
+
+.interactive {
+  border: 1px solid $color-divider;
+  transition:
+    background-color $duration-normal $ease-standard,
+    border-color $duration-normal $ease-standard;
+
+  &:hover {
+    background: rgba($color-harbor, 0.03);
+    border-color: darken($color-divider, 4%);
+  }
+}
