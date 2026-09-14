@@ -1,41 +1,100 @@
 @use '../../styles/variables' as *;
 
-.card {
+.row {
   display: block;
   background: $color-surface;
-  border: 1px solid $color-border;
+  border: 1px solid $color-divider;
+  border-left: 3px solid transparent;
   border-radius: $radius-md;
   padding: $space-4;
-  box-shadow: $shadow-sm;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    background-color $duration-normal $ease-standard,
+    border-color $duration-normal $ease-standard;
+
+  &:hover {
+    background: rgba($color-harbor, 0.04);
+    border-left-color: $color-signal;
+    border-color: $color-divider;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: $shadow-md;
-}
-
-.header {
+.main {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: $space-3;
-  margin-bottom: $space-3;
+  margin-bottom: $space-2;
+}
+
+@include respond-md {
+  .main {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-4;
+  }
+}
+
+.primary {
+  min-width: 0;
 }
 
 .title {
   margin: 0 0 $space-1;
-  font-size: 1.05rem;
+  font-size: $font-size-body;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+  @include line-clamp(2);
 }
 
 .company {
   margin: 0;
-  color: $color-muted;
+  color: $color-fog;
+  font-size: $font-size-meta;
+}
+
+.highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-2;
+  flex-shrink: 0;
+}
+
+@include respond-md {
+  .highlight {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+.salary {
+  font-size: $font-size-meta;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+  white-space: nowrap;
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-2 $space-4;
-  color: $color-muted;
-  font-size: 0.875rem;
+  align-items: center;
+  gap: $space-2;
+  color: $color-fog;
+  font-size: $font-size-sm;
+}
+
+.metaDivider {
+  color: $color-divider;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
 }

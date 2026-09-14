@@ -7,9 +7,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <div className={styles.layout}>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <Link to="/" className={styles.logo}>JobFinder SG</Link>
-          <nav className={styles.nav}>
-            <NavLink to="/" className={({ isActive }) => (isActive ? styles.active : undefined)}>
+          <Link to="/" className={styles.logo}>
+            <span className={styles.logoMark} aria-hidden="true" />
+            JobFinder SG
+          </Link>
+          <nav className={styles.nav} aria-label="Main">
+            <NavLink to="/" className={({ isActive }) => (isActive ? styles.active : undefined)} end>
               Search
             </NavLink>
             <NavLink
@@ -21,7 +24,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
       </header>
-      <main className={styles.main}>{children}</main>
+      <main className={styles.main} id="main-content">
+        {children}
+      </main>
     </div>
   );
 }

@@ -2,29 +2,31 @@
 
 .searchBar {
   display: flex;
+  flex-direction: column;
   gap: $space-2;
+  width: 100%;
 }
 
-.searchBar input {
+@include respond-sm {
+  .searchBar {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.input {
   flex: 1;
-  min-height: 44px;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  padding: 0 $space-3;
-  background: $color-surface;
+  min-width: 0;
 }
 
-.searchBar button {
-  min-height: 44px;
-  border: none;
-  border-radius: $radius-sm;
-  padding: 0 $space-4;
-  background: $color-primary;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
+.submit {
+  flex-shrink: 0;
+  width: 100%;
 }
 
-.searchBar button:hover {
-  background: $color-primary-dark;
+@include respond-sm {
+  .submit {
+    width: auto;
+    min-width: 120px;
+  }
 }

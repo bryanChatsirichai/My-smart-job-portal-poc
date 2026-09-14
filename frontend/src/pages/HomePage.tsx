@@ -5,8 +5,14 @@ import { fetchJobs } from '../api/jobs';
 import { FilterPanel } from '../components/FilterPanel/FilterPanel';
 import { JobCard } from '../components/JobCard/JobCard';
 import { SearchBar } from '../components/SearchBar/SearchBar';
+import { Button } from '../components/ui/Button/Button';
+import { Pill } from '../components/ui/Pill/Pill';
 import type { JobListItem } from '../types/job';
 import styles from './HomePage.module.scss';
+
+type FilterKey = 'q' | 'salary_min' | 'salary_max' | 'location' | 'source';
+
+const PAGE_SIZE = 20;
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,6 +27,7 @@ export function HomePage() {
   const [error, setError] = useState<string | null>(null);
 
   const page = Number(searchParams.get('page') ?? '1');
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const loadJobs = useCallback(async () => {
     setLoading(true);
@@ -33,7 +40,7 @@ export function HomePage() {
         location: searchParams.get('location') || undefined,
         source: searchParams.get('source') || undefined,
         page,
-        limit: 20,
+        limit: PAGE_SIZE,
       });
       setJobs(response.items);
       setTotal(response.total);
@@ -63,20 +70,59 @@ export function HomePage() {
   };
 
   const activeFilters = useMemo(() => {
-    const chips: string[] = [];
-    if (searchParams.get('q')) chips.push(`"${searchParams.get('q')}"`);
-    if (searchParams.get('salary_min')) chips.push(`Min ${searchParams.get('salary_min')}`);
-    if (searchParams.get('salary_max')) chips.push(`Max ${searchParams.get('salary_max')}`);
-    if (searchParams.get('location')) chips.push(searchParams.get('location')!);
-    if (searchParams.get('source')) chips.push(searchParams.get('source')!);
+    const chips: { key: FilterKey; label: string }[] = [];
+    const q = searchParams.get('q');
+    if (q) chips.push({ key: 'q', label: `"${q}"` });
+    if (searchParams.get('salary_min')) {
+      chips.push({ key: 'salary_min', label: `Min ${searchParams.get('salary_min')}` });
+    }
+    if (searchParams.get('salary_max')) {
+      chips.push({ key: 'salary_max', label: `Max ${searchParams.get('salary_max')}` });
+    }
+    if (searchParams.get('location')) {
+      chips.push({ key: 'location', label: searchParams.get('location')! });
+    }
+    if (searchParams.get('source')) {
+      chips.push({ key: 'source', label: searchParams.get('source')! });
+    }
     return chips;
   }, [searchParams]);
+
+  const removeFilter = (key: FilterKey) => {
+    const next = new URLSearchParams(searchParams);
+    next.delete(key);
+    next.set('page', '1');
+    setSearchParams(next);
+
+    if (key === 'q') setQuery('');
+    if (key === 'salary_min') setSalaryMin('');
+    if (key === 'salary_max') setSalaryMax('');
+    if (key === 'location') setLocation('');
+    if (key === 'source') setSource('');
+  };
+
+  const clearAllFilters = () => {
+    setQuery('');
+    setSalaryMin('');
+    setSalaryMax('');
+    setLocation('');
+    setSource('');
+    setSearchParams(new URLSearchParams({ page: '1' }));
+  };
+
+  const setPage = (nextPage: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('page', String(nextPage));
+    setSearchParams(next);
+  };
 
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
-        <h1>Find your next role in Singapore</h1>
-        <p>Search aggregated listings and track your applications in one place.</p>
+        <h1 className={styles.headline}>Find your next role in Singapore</h1>
+        <p className={styles.subcopy}>
+          Search aggregated listings and track your applications in one place.
+        </p>
         <SearchBar value={query} onChange={setQuery} onSubmit={applyFilters} />
       </section>
 
@@ -95,21 +141,28 @@ export function HomePage() {
 
         <section className={styles.results}>
           <div className={styles.summary}>
-            <strong>{loading ? 'Searching...' : `Showing ${jobs.length} of ${total} jobs`}</strong>
+            <strong className={styles.summaryText}>
+              {loading ? 'Searching...' : `Showing ${jobs.length} of ${total} jobs`}
+            </strong>
             {activeFilters.length > 0 && (
               <div className={styles.chips}>
                 {activeFilters.map((chip) => (
-                  <span key={chip} className={styles.chip}>{chip}</span>
+                  <Pill key={chip.key} onRemove={() => removeFilter(chip.key)}>
+                    {chip.label}
+                  </Pill>
                 ))}
+                <Button type="button" variant="ghost" className={styles.clearAll} onClick={clearAllFilters}>
+                  Clear all
+                </Button>
               </div>
             )}
           </div>
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <p className={styles.error} role="alert">{error}</p>}
 
           {loading ? (
             <div className={styles.skeletons}>
-              {Array.from({ length: 4 }).map((_, index) => (
+              {Array.from({ length: 6 }).map((_, index) => (
                 <div key={index} className={styles.skeleton} />
               ))}
             </div>
@@ -117,11 +170,42 @@ export function HomePage() {
             <div className={styles.empty}>
               <h2>No jobs found</h2>
               <p>Try broadening your search or adjusting your filters.</p>
+              {activeFilters.length > 0 && (
+                <Button type="button" variant="secondary" onClick={clearAllFilters}>
+                  Clear filters
+                </Button>
+              )}
             </div>
           ) : (
-            <div className={styles.list}>
-              {jobs.map((job) => <JobCard key={job.id} job={job} />)}
-            </div>
+            <>
+              <div className={styles.list}>
+                {jobs.map((job) => <JobCard key={job.id} job={job} />)}
+              </div>
+
+              {totalPages > 1 && (
+                <nav className={styles.pagination} aria-label="Job results pages">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={page <= 1}
+                    onClick={() => setPage(page - 1)}
+                  >
+                    Previous
+                  </Button>
+                  <span className={styles.pageInfo}>
+                    Page {page} of {totalPages}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={page >= totalPages}
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Next
+                  </Button>
+                </nav>
+              )}
+            </>
           )}
         </section>
       </div>
