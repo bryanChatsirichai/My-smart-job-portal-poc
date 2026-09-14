@@ -1,5 +1,6 @@
 import type { JobDetail, JobListItem } from '../../types/job';
 import { getSourceDisplayName } from '../../utils/format';
+import { Button } from '../ui/Button/Button';
 import styles from './ApplyButton.module.scss';
 
 interface ApplyButtonProps {
@@ -13,13 +14,15 @@ export function ApplyButton({ job, onApply }: ApplyButtonProps) {
     onApply();
   };
 
+  const sourceName = getSourceDisplayName(job.source);
+
   return (
     <div className={styles.wrapper}>
-      <button type="button" className={styles.button} onClick={handleClick}>
-        Apply on {getSourceDisplayName(job.source)}
-      </button>
+      <Button type="button" variant="primary" className={styles.button} onClick={handleClick}>
+        Apply on {sourceName}
+      </Button>
       <p className={styles.note}>
-        Opens {getSourceDisplayName(job.source)} in a new tab. Sign in there to apply.
+        Opens {sourceName} in a new tab. Sign in there to apply.
       </p>
     </div>
   );

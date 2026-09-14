@@ -1,5 +1,5 @@
 import type { ApplicationStatus } from '../../types/job';
-import styles from './ApplicationStatusBadge.module.scss';
+import { Badge } from '../ui/Badge/Badge';
 
 const LABELS: Record<ApplicationStatus, string> = {
   saved: 'Saved',
@@ -11,5 +11,9 @@ const LABELS: Record<ApplicationStatus, string> = {
 };
 
 export function ApplicationStatusBadge({ status }: { status: ApplicationStatus }) {
-  return <span className={`${styles.badge} ${styles[status]}`}>{LABELS[status]}</span>;
+  return (
+    <Badge variant="status" status={status}>
+      {LABELS[status]}
+    </Badge>
+  );
 }

@@ -1,8 +1,11 @@
 import { Link, NavLink } from 'react-router-dom';
 
+import { useTrackedApplications } from '../../hooks/useTrackedApplications';
 import styles from './Layout.module.scss';
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { stats } = useTrackedApplications();
+
   return (
     <div className={styles.layout}>
       <header className={styles.header}>
@@ -20,6 +23,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
               className={({ isActive }) => (isActive ? styles.active : undefined)}
             >
               My Applications
+              {stats.total > 0 && (
+                <span className={styles.navBadge} aria-label={`${stats.total} tracked applications`}>
+                  {stats.total}
+                </span>
+              )}
             </NavLink>
           </nav>
         </div>

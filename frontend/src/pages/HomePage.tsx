@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { fetchJobs } from '../api/jobs';
@@ -15,6 +15,7 @@ type FilterKey = 'q' | 'salary_min' | 'salary_max' | 'location' | 'source';
 const PAGE_SIZE = 20;
 
 export function HomePage() {
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [salaryMin, setSalaryMin] = useState(searchParams.get('salary_min') ?? '');
@@ -57,6 +58,26 @@ export function HomePage() {
     }, 300);
     return () => window.clearTimeout(timer);
   }, [loadJobs]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== '/') return;
+      const target = event.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+      event.preventDefault();
+      searchInputRef.current?.focus();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const applyFilters = () => {
     const next = new URLSearchParams();
@@ -123,7 +144,12 @@ export function HomePage() {
         <p className={styles.subcopy}>
           Search aggregated listings and track your applications in one place.
         </p>
-        <SearchBar value={query} onChange={setQuery} onSubmit={applyFilters} />
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          onSubmit={applyFilters}
+          inputRef={searchInputRef}
+        />
       </section>
 
       <div className={styles.layout}>

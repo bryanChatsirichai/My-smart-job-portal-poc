@@ -1,79 +1,144 @@
 @use '../../styles/variables' as *;
 
 .card {
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
   padding: $space-4;
   display: grid;
   gap: $space-3;
-  box-shadow: $shadow-sm;
+  border-left: 3px solid $color-divider;
+}
+
+.saved {
+  border-left-color: $status-saved;
+}
+
+.applied {
+  border-left-color: $status-applied;
+}
+
+.interview {
+  border-left-color: $status-interview;
+}
+
+.rejected {
+  border-left-color: $status-rejected;
+}
+
+.accepted {
+  border-left-color: $status-accepted;
+}
+
+.withdrawn {
+  border-left-color: $status-withdrawn;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: $space-3;
 }
 
-.header h3 {
+.title {
   margin: 0 0 $space-1;
+  font-size: $font-size-body;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
 }
 
-.header p {
+.company {
   margin: 0;
-  color: $color-muted;
+  color: $color-fog;
+  font-size: $font-size-meta;
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
   gap: $space-2 $space-4;
-  color: $color-muted;
-  font-size: 0.875rem;
+  color: $color-fog;
+  font-size: $font-size-sm;
 }
 
-.statusField,
-.notesField {
+.field {
   display: grid;
-  gap: $space-2;
-  font-size: 0.875rem;
-  color: $color-muted;
+  gap: $space-1;
 }
 
-.statusField select,
-.notesField textarea {
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  padding: $space-2 $space-3;
-  background: $color-surface;
+.fieldLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-fog;
 }
 
-.notesField textarea {
+.textarea {
+  width: 100%;
   min-height: 80px;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-divider;
+  border-radius: $radius-md;
+  background: $color-surface;
+  color: $color-ink;
+  font-size: $font-size-meta;
+  line-height: $line-height-body;
   resize: vertical;
+  transition:
+    border-color $duration-normal $ease-standard,
+    box-shadow $duration-normal $ease-standard;
+
+  &::placeholder {
+    color: $color-fog;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: darken($color-divider, 6%);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-signal;
+    box-shadow: 0 0 0 3px rgba($color-signal, 0.15);
+  }
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-2;
-}
-
-.actions a,
-.actions button {
-  min-height: 40px;
-  border-radius: $radius-sm;
-  padding: 0 $space-3;
-  border: 1px solid $color-border;
-  background: $color-surface;
-  display: inline-flex;
   align-items: center;
+  gap: $space-2 $space-4;
+  padding-top: $space-1;
 }
 
-.actions a:first-child {
-  background: $color-primary;
-  border-color: $color-primary;
-  color: white;
-  font-weight: 600;
+.link {
+  font-size: $font-size-meta;
+  font-weight: $font-weight-medium;
+  color: $color-harbor;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: $color-ink;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: $radius-xs;
+  }
+}
+
+.remove {
+  min-height: 36px;
+  padding: 0 $space-2;
+  margin-left: auto;
+  color: $status-rejected;
+
+  &:hover:not(:disabled) {
+    background: rgba($status-rejected, 0.06);
+    color: $status-rejected;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .textarea {
+    transition: none;
+  }
 }
