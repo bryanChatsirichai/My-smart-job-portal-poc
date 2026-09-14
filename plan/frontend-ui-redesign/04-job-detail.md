@@ -2,6 +2,9 @@
 
 **Goal:** Readable job posting layout, prominent apply action, polished modal and toast.
 
+**Status:** ✅ Finished  
+**Finished:** 2026-09-14
+
 **Estimated effort:** 1 session  
 **Depends on:** [Steps 1–2](./01-foundation.md)  
 **Blocks:** Nothing
@@ -74,11 +77,11 @@
 
 ## Acceptance criteria
 
-- [ ] Job loads by ID as before
-- [ ] Apply opens external URL; modal appears; track writes to dashboard
-- [ ] Sidebar sticky on desktop, fixed bottom on mobile
-- [ ] Description readable long-form
-- [ ] `npm run build` passes
+- [x] Job loads by ID as before
+- [x] Apply opens external URL; modal appears; track writes to dashboard
+- [x] Sidebar sticky on desktop, fixed bottom on mobile
+- [x] Description readable long-form
+- [x] `npm run build` passes
 
 ## Files touched
 

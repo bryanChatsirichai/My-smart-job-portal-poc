@@ -2,6 +2,9 @@
 
 **Goal:** Highest-impact screen — integrated search hero, improved filters, scannable job rows, pagination.
 
+**Status:** ✅ Finished  
+**Finished:** 2026-09-14
+
 **Estimated effort:** 1–2 sessions  
 **Depends on:** [Steps 1–2](./01-foundation.md)  
 **Blocks:** Nothing (Step 6 polish comes later)
@@ -81,11 +84,11 @@ const setPage = (nextPage: number) => {
 
 ## Acceptance criteria
 
-- [ ] Search + filters update URL and results as before
-- [ ] Job rows readable at a glance (title, company, salary, source)
-- [ ] Pagination changes page and refetches via existing `loadJobs`
-- [ ] Mobile: filters usable without horizontal scroll on main content
-- [ ] `npm run build` passes
+- [x] Search + filters update URL and results as before
+- [x] Job rows readable at a glance (title, company, salary, source)
+- [x] Pagination changes page and refetches via existing `loadJobs`
+- [x] Mobile: filters usable without horizontal scroll on main content
+- [x] `npm run build` passes
 
 ## Files touched
 
