@@ -95,15 +95,6 @@
   color: $color-ink;
 }
 
-.description p {
-  margin: 0;
-  max-width: $content-max-width;
-  white-space: pre-wrap;
-  color: $color-ink;
-  font-size: $font-size-body;
-  line-height: $line-height-body;
-}
-
 .sidebar {
   background: $color-surface;
   border: 1px solid $color-divider;

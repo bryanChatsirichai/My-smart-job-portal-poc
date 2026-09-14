@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { fetchJobById } from '../api/jobs';
 import { ApplyButton } from '../components/ApplyButton/ApplyButton';
+import { JobDescription } from '../components/JobDescription/JobDescription';
 import { SourceBadge } from '../components/SourceBadge/SourceBadge';
 import { TrackApplicationModal } from '../components/TrackApplicationModal/TrackApplicationModal';
 import { Card } from '../components/ui/Card/Card';
@@ -144,7 +145,7 @@ export function JobDetailPage() {
 
         <section className={styles.description}>
           <h2>Job description</h2>
-          <p>{job.description}</p>
+          <JobDescription description={job.description} />
         </section>
       </Card>
 
