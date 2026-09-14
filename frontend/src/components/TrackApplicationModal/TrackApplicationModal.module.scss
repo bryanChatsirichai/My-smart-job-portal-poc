@@ -1,11 +1,12 @@
 @use '../../styles/variables' as *;
 
 .dialog {
-  border: none;
+  border: 1px solid $glass-border;
   border-radius: $radius-lg;
   padding: 0;
   max-width: 480px;
   width: calc(100% - #{$space-6});
+  @include glass-panel(0.9);
   box-shadow: $shadow-md;
 
   &:focus-visible {
@@ -14,7 +15,9 @@
 }
 
 .dialog::backdrop {
-  background: rgba($color-ink, 0.45);
+  background: rgba($color-wood-dark, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   animation: fadeIn $duration-normal $ease-standard;
 }
 

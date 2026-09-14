@@ -12,8 +12,7 @@
 
 .panel {
   display: none;
-  background: $color-surface;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.72);
   border-radius: $radius-md;
   padding: $space-4;
   gap: $space-4;
@@ -45,8 +44,7 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   color: $color-fog;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
 .fieldGroup {
@@ -93,7 +91,9 @@
   position: fixed;
   inset: 0;
   z-index: $z-drawer;
-  background: rgba($color-ink, 0.4);
+  background: rgba($color-wood-dark, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
   @include respond-lg {
     display: none;
@@ -111,8 +111,8 @@
   display: grid;
   align-content: start;
   gap: $space-4;
-  background: $color-surface;
-  border-left: 1px solid $color-divider;
+  @include glass-panel(0.88);
+  border-left: 1px solid $glass-border;
   overflow-y: auto;
   transform: translateX(100%);
   transition: transform $duration-normal $ease-standard;

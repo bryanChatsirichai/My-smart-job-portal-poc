@@ -88,12 +88,12 @@
 .skeleton {
   height: 88px;
   border-radius: $radius-md;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.45);
   background: linear-gradient(
     90deg,
-    rgba($color-divider, 0.3) 25%,
-    rgba($color-divider, 0.15) 50%,
-    rgba($color-divider, 0.3) 75%
+    rgba($color-divider, 0.35) 25%,
+    rgba(255, 248, 238, 0.5) 50%,
+    rgba($color-divider, 0.35) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.2s infinite;
@@ -103,8 +103,7 @@
   display: grid;
   gap: $space-3;
   justify-items: start;
-  background: $color-surface;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.72);
   border-radius: $radius-md;
   padding: $space-5;
 }

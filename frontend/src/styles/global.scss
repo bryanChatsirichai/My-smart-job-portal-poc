@@ -16,8 +16,9 @@ body,
 body {
   font-family: $font-ui;
   color: $color-ink;
-  background: $color-mist;
   line-height: $line-height-body;
+  @include library-atmosphere;
+  background-attachment: fixed;
 }
 
 a {
@@ -38,7 +39,7 @@ textarea {
 }
 
 ::selection {
-  background: rgba($color-signal, 0.18);
+  background: rgba($color-signal, 0.22);
   color: $color-ink;
 }
 
@@ -49,5 +50,12 @@ textarea {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body {
+    background-image: none;
+    background-color: $color-parchment;
   }
 }

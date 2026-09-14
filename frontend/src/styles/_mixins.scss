@@ -35,3 +35,24 @@
   -webkit-line-clamp: $lines;
   overflow: hidden;
 }
+
+@mixin glass-panel($opacity: 0.72) {
+  background: rgba(255, 248, 238, $opacity);
+  backdrop-filter: blur($glass-blur) saturate(1.15);
+  -webkit-backdrop-filter: blur($glass-blur) saturate(1.15);
+  border: 1px solid $glass-border;
+  box-shadow: $shadow-glass;
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background: rgba(255, 248, 238, 0.96);
+  }
+}
+
+@mixin library-atmosphere {
+  background-color: $color-mist;
+  background-image:
+    radial-gradient(ellipse 100% 55% at 50% -8%, rgba($color-wood-mid, 0.2), transparent 52%),
+    radial-gradient(ellipse 75% 50% at 100% 100%, rgba($color-wood-dark, 0.14), transparent 48%),
+    radial-gradient(ellipse 60% 45% at 0% 88%, rgba($color-wood-dark, 0.1), transparent 42%),
+    linear-gradient(168deg, #e5dac8 0%, #f0e6d4 38%, #ede2ce 72%, #ddd0b8 100%);
+}

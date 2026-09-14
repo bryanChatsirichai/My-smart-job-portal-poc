@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../styles/variables' as *;
 
 .page {
@@ -11,8 +12,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: $space-4;
-  background: $color-surface;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.72);
   border-radius: $radius-md;
   padding: $space-5;
 }
@@ -47,8 +47,7 @@
   display: grid;
   gap: $space-1;
   padding: $space-3;
-  background: $color-mist;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.6);
   border-radius: $radius-md;
   text-align: center;
 }
@@ -63,8 +62,7 @@
 .statLabel {
   font-size: $font-size-sm;
   color: $color-fog;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
 .filtersWrap {
@@ -77,7 +75,7 @@
     right: 0;
     bottom: $space-1;
     width: $space-6;
-    background: linear-gradient(to right, transparent, $color-mist);
+    background: linear-gradient(to right, transparent, rgba($color-parchment, 0.85));
     pointer-events: none;
   }
 }
@@ -95,9 +93,10 @@
 }
 
 .filterActive {
-  background: rgba($color-signal, 0.1);
-  border-color: $color-signal;
+  background: rgba($color-signal, 0.18);
+  border-color: rgba($color-signal, 0.5);
   color: $color-ink;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .grid {
@@ -115,8 +114,7 @@
   display: grid;
   gap: $space-3;
   justify-items: start;
-  background: $color-surface;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.72);
   border-radius: $radius-md;
   padding: $space-5;
 }
@@ -142,17 +140,18 @@
   min-height: 44px;
   padding: 0 $space-4;
   border-radius: $radius-md;
-  background: $color-signal;
-  border: 1px solid $color-signal;
-  color: $color-surface;
+  background: linear-gradient(180deg, color.adjust($color-signal, $lightness: 6%) 0%, $color-signal 100%);
+  border: 1px solid $color-signal-dark;
+  color: $color-ivory;
   font-size: $font-size-meta;
   font-weight: $font-weight-semibold;
   text-decoration: none;
-  transition: background-color $duration-normal $ease-standard;
+  box-shadow: 0 2px 8px rgba($color-wood-dark, 0.18);
+  transition: background-color $duration-normal $ease-standard, box-shadow $duration-normal $ease-standard;
 
   &:hover {
-    background: $color-signal-dark;
-    border-color: $color-signal-dark;
+    background: linear-gradient(180deg, $color-signal 0%, $color-signal-dark 100%);
+    box-shadow: 0 3px 12px rgba($color-wood-dark, 0.22);
   }
 
   &:focus-visible {

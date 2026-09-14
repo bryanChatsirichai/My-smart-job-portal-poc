@@ -5,9 +5,9 @@
   width: 100%;
   min-height: 44px;
   padding: $space-2 $space-3;
-  border: 1px solid $color-divider;
+  border: 1px solid rgba($color-divider, 0.85);
   border-radius: $radius-md;
-  background: $color-surface;
+  @include glass-panel(0.82);
   color: $color-ink;
   font-size: $font-size-meta;
   cursor: pointer;
@@ -16,18 +16,26 @@
     box-shadow $duration-normal $ease-standard;
 
   &:hover:not(:disabled) {
-    border-color: color.adjust($color-divider, $lightness: -6%);
+    border-color: color.adjust($color-divider, $lightness: -8%);
   }
 
   &:focus {
     outline: none;
     border-color: $color-signal;
-    box-shadow: 0 0 0 3px rgba($color-signal, 0.15);
+    box-shadow: 0 0 0 3px rgba($color-signal, 0.2), $shadow-sm;
   }
 
   &:disabled {
-    background: $color-mist;
+    background: rgba($color-mist, 0.6);
     color: $color-fog;
     cursor: not-allowed;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .select {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: $color-surface;
   }
 }

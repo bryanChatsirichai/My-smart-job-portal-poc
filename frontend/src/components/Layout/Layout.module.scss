@@ -1,17 +1,17 @@
+@use 'sass:color';
 @use '../../styles/variables' as *;
 
 .layout {
   min-height: 100vh;
-  background: $color-mist;
 }
 
 .header {
   position: sticky;
   top: 0;
   z-index: $z-header;
-  background: rgba($color-surface, 0.88);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid $color-divider;
+  @include glass-panel(0.78);
+  border-bottom: 1px solid rgba($color-divider, 0.6);
+  box-shadow: $shadow-sm;
 }
 
 .headerInner {
@@ -45,7 +45,8 @@
   width: 8px;
   height: 8px;
   border-radius: $radius-pill;
-  background: $color-signal;
+  background: linear-gradient(135deg, color.adjust($color-signal, $lightness: 12%), $color-signal-dark);
+  box-shadow: 0 0 6px rgba($color-signal, 0.45);
 }
 
 .nav {
@@ -86,7 +87,7 @@
     left: $space-3;
     right: $space-3;
     height: 2px;
-    background: $color-signal;
+    background: linear-gradient(90deg, $color-signal-dark, $color-signal);
     border-radius: $radius-pill;
   }
 }
@@ -106,10 +107,11 @@
   padding: 0 6px;
   border-radius: $radius-pill;
   background: $color-signal;
-  color: $color-surface;
+  color: $color-ivory;
   font-size: 0.6875rem;
   font-weight: $font-weight-semibold;
   line-height: 1;
+  box-shadow: 0 1px 4px rgba($color-wood-dark, 0.2);
 }
 
 @include respond-md {
@@ -119,5 +121,13 @@
 
   .main {
     padding: $space-5;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .header {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: $color-surface;
   }
 }

@@ -2,27 +2,38 @@
 @use '../../../styles/variables' as *;
 
 .card {
-  background: $color-surface;
   border-radius: $radius-md;
 }
 
 .flat {
-  border: 1px solid $color-divider;
+  @include glass-panel(0.68);
 }
 
 .elevated {
-  border: 1px solid $color-divider;
-  box-shadow: $shadow-sm;
+  @include glass-panel(0.75);
+  box-shadow: $shadow-md, inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .interactive {
-  border: 1px solid $color-divider;
+  @include glass-panel(0.65);
   transition:
     background-color $duration-normal $ease-standard,
-    border-color $duration-normal $ease-standard;
+    border-color $duration-normal $ease-standard,
+    box-shadow $duration-normal $ease-standard;
 
   &:hover {
-    background: rgba($color-harbor, 0.03);
-    border-color: color.adjust($color-divider, $lightness: -4%);
+    background: rgba(255, 248, 238, 0.82);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: $shadow-md, inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .flat,
+  .elevated,
+  .interactive {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: $color-surface;
   }
 }

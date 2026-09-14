@@ -53,7 +53,7 @@
   margin: 0 0 $space-4;
   font-size: $font-size-body;
   font-weight: $font-weight-semibold;
-  color: $color-ink;
+  color: $color-wood-mid;
 }
 
 .meta {
@@ -84,7 +84,7 @@
   gap: $space-2;
   margin-bottom: $space-5;
   padding: $space-3;
-  background: $color-mist;
+  @include glass-panel(0.55);
   border-radius: $radius-md;
 }
 
@@ -96,8 +96,7 @@
 }
 
 .sidebar {
-  background: $color-surface;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.78);
   border-radius: $radius-md;
   padding: $space-4;
   position: sticky;
@@ -105,8 +104,7 @@
 }
 
 .state {
-  background: $color-surface;
-  border: 1px solid $color-divider;
+  @include glass-panel(0.75);
   border-radius: $radius-md;
   padding: $space-5;
 }
@@ -122,8 +120,9 @@
   right: $space-4;
   bottom: $space-4;
   z-index: $z-toast;
-  background: $color-ink;
-  color: $color-surface;
+  @include glass-panel(0.92);
+  background: rgba($color-wood-dark, 0.88);
+  color: $color-ivory;
   padding: $space-3 $space-4;
   border-radius: $radius-md;
   font-size: $font-size-meta;
@@ -141,7 +140,7 @@
     z-index: calc($z-header - 1);
     border-radius: $radius-lg $radius-lg 0 0;
     border-bottom: none;
-    box-shadow: 0 -8px 24px rgba($color-ink, 0.08);
+    box-shadow: 0 -8px 28px rgba($color-wood-dark, 0.15);
     padding-bottom: calc(#{$space-4} + env(safe-area-inset-bottom, 0px));
   }
 
