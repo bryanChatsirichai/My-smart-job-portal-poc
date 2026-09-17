@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../../styles/variables' as *;
 
 .input {
@@ -15,7 +16,7 @@
   }
 
   &:hover:not(:disabled) {
-    border-color: darken($color-divider, 6%);
+    border-color: color.adjust($color-divider, $lightness: -6%);
   }
 
   &:focus {

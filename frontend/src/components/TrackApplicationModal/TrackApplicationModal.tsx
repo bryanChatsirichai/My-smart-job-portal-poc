@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { getSourceDisplayName } from '../../utils/format';
+import { Button } from '../ui/Button/Button';
 import styles from './TrackApplicationModal.module.scss';
 
 interface TrackApplicationModalProps {
@@ -20,35 +21,66 @@ export function TrackApplicationModal({
   onClose,
 }: TrackApplicationModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
+    if (open && !dialog.open) {
+      dialog.showModal();
+      window.setTimeout(() => {
+        const firstFocusable = dialog.querySelector<HTMLElement>(
+          'button, [href], input, select, textarea',
+        );
+        firstFocusable?.focus();
+      }, 0);
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
+  const sourceName = getSourceDisplayName(source);
+
   return (
-    <dialog ref={dialogRef} className={styles.dialog} onClose={onClose}>
+    <dialog
+      ref={dialogRef}
+      className={styles.dialog}
+      onClose={onClose}
+      aria-labelledby="track-modal-title"
+    >
       <div className={styles.content}>
-        <h2>Track this application?</h2>
+        <h2 id="track-modal-title">Track this application?</h2>
         {alreadyTracked ? (
           <>
             <p>This job is already in your dashboard.</p>
             <div className={styles.actions}>
-              <Link to="/dashboard" className={styles.primary}>Go to dashboard</Link>
-              <button type="button" onClick={onClose}>Close</button>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => {
+                  onClose();
+                  navigate('/dashboard');
+                }}
+              >
+                Go to dashboard
+              </Button>
+              <Button type="button" variant="secondary" onClick={onClose}>
+                Close
+              </Button>
             </div>
           </>
         ) : (
           <>
             <p>
               Would you like to save this job to your dashboard so you can keep track of your
-              application on {getSourceDisplayName(source)}?
+              application on {sourceName}?
             </p>
             <div className={styles.actions}>
-              <button type="button" className={styles.primary} onClick={onConfirm}>Yes, track it</button>
-              <button type="button" onClick={onClose}>No thanks</button>
+              <Button type="button" variant="primary" onClick={onConfirm}>
+                Yes, track it
+              </Button>
+              <Button type="button" variant="secondary" onClick={onClose}>
+                No thanks
+              </Button>
             </div>
           </>
         )}

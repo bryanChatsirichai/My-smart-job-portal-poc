@@ -2,6 +2,9 @@
 
 **Goal:** Apply the new brand to the app chrome — sticky header, navigation, main content area.
 
+**Status:** ✅ Finished  
+**Finished:** 2026-09-14
+
 **Estimated effort:** 0.5–1 session  
 **Depends on:** [Step 1](./01-foundation.md)  
 **Blocks:** Steps 3–5 (recommended order)
@@ -40,11 +43,11 @@
 
 ## Acceptance criteria
 
-- [ ] Header sticky, readable on scroll
-- [ ] Active route visually distinct (not color-only)
-- [ ] Keyboard: Tab through logo → nav links → main content
-- [ ] `npm run build` passes
-- [ ] All three routes render inside layout without layout shift
+- [x] Header sticky, readable on scroll
+- [x] Active route visually distinct (not color-only)
+- [x] Keyboard: Tab through logo → nav links → main content
+- [x] `npm run build` passes
+- [x] All three routes render inside layout without layout shift
 
 ## Files touched
 

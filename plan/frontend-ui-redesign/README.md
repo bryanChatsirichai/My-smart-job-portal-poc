@@ -16,11 +16,11 @@ What must stay unchanged: [constraints.md](./constraints.md).
 |------|----------|--------|----------|
 | 0 | [00-prep.md](./00-prep.md) | ✅ Done | 2026-09-11 |
 | 1 | [01-foundation.md](./01-foundation.md) | ✅ Done | 2026-09-11 |
-| 2 | [02-layout-shell.md](./02-layout-shell.md) | ⬜ Pending | — |
-| 3 | [03-homepage.md](./03-homepage.md) | ⬜ Pending | — |
-| 4 | [04-job-detail.md](./04-job-detail.md) | ⬜ Pending | — |
-| 5 | [05-dashboard.md](./05-dashboard.md) | ⬜ Pending | — |
-| 6 | [06-polish-accessibility.md](./06-polish-accessibility.md) | ⬜ Pending | — |
+| 2 | [02-layout-shell.md](./02-layout-shell.md) | ✅ Done | 2026-09-14 |
+| 3 | [03-homepage.md](./03-homepage.md) | ✅ Done | 2026-09-14 |
+| 4 | [04-job-detail.md](./04-job-detail.md) | ✅ Done | 2026-09-14 |
+| 5 | [05-dashboard.md](./05-dashboard.md) | ✅ Done | 2026-09-14 |
+| 6 | [06-polish-accessibility.md](./06-polish-accessibility.md) | ✅ Done | 2026-09-14 |
 
 ## Implementation order
 
@@ -47,11 +47,11 @@ Execute steps in sequence. Each step should leave the app buildable and shippabl
 
 ## Success criteria (all steps)
 
-- [ ] Same API calls and URL search params as before
-- [ ] Track / apply / remove applications still work via `localStorage`
+- [x] Same API calls and URL search params as before
+- [x] Track / apply / remove applications still work via `localStorage`
 - [x] `npm run build` passes with no changes to `api/`, `hooks/`, `services/`, or `types/` (`tsc -b` verified)
-- [ ] Visually distinct from generic teal SaaS templates
-- [ ] Keyboard navigable; `prefers-reduced-motion` respected
+- [x] Visually distinct from generic teal SaaS templates
+- [x] Keyboard navigable; `prefers-reduced-motion` respected
 
 ## File map (presentation layer only)
 
