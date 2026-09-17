@@ -11,6 +11,11 @@ const SOURCE_CLASS: Record<string, string> = {
 export function SourceBadge({ source }: { source: string }) {
   const sourceClass = SOURCE_CLASS[source] ?? styles.default;
   const classes = [styles.badge, sourceClass].join(' ');
+  const label = getSourceDisplayName(source);
 
-  return <span className={classes}>{getSourceDisplayName(source)}</span>;
+  return (
+    <span className={classes} aria-label={`Source: ${label}`}>
+      {label}
+    </span>
+  );
 }

@@ -1,3 +1,5 @@
+import type { Ref } from 'react';
+
 import { Button } from '../ui/Button/Button';
 import { Input } from '../ui/Input/Input';
 import styles from './SearchBar.module.scss';
@@ -6,9 +8,10 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
+  inputRef?: Ref<HTMLInputElement>;
 }
 
-export function SearchBar({ value, onChange, onSubmit }: SearchBarProps) {
+export function SearchBar({ value, onChange, onSubmit, inputRef }: SearchBarProps) {
   return (
     <form
       className={styles.searchBar}
@@ -18,6 +21,7 @@ export function SearchBar({ value, onChange, onSubmit }: SearchBarProps) {
       }}
     >
       <Input
+        ref={inputRef}
         type="search"
         inputSize="lg"
         className={styles.input}

@@ -57,6 +57,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  gap: $space-2;
   min-height: 44px;
   padding: 0 $space-3;
   color: $color-fog;
@@ -94,6 +95,21 @@
   max-width: $layout-max-width;
   margin: 0 auto;
   padding: $space-4;
+}
+
+.navBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: $radius-pill;
+  background: $color-signal;
+  color: $color-surface;
+  font-size: 0.6875rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
 }
 
 @include respond-md {

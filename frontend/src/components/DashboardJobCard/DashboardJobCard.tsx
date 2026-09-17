@@ -4,6 +4,9 @@ import type { ApplicationStatus, TrackedApplication } from '../../types/job';
 import { formatDate, formatSalary, getSourceDisplayName } from '../../utils/format';
 import { ApplicationStatusBadge } from '../ApplicationStatusBadge/ApplicationStatusBadge';
 import { SourceBadge } from '../SourceBadge/SourceBadge';
+import { Button } from '../ui/Button/Button';
+import { Card } from '../ui/Card/Card';
+import { Select } from '../ui/Select/Select';
 import styles from './DashboardJobCard.module.scss';
 
 const STATUS_OPTIONS: ApplicationStatus[] = [
@@ -33,12 +36,14 @@ export function DashboardJobCard({
     item.jobSnapshot.location?.region ||
     'Singapore';
 
+  const statusClass = styles[item.status] ?? '';
+
   return (
-    <article className={styles.card}>
+    <Card className={[styles.card, statusClass].filter(Boolean).join(' ')} variant="flat">
       <div className={styles.header}>
         <div>
-          <h3>{item.jobSnapshot.title}</h3>
-          <p>{item.jobSnapshot.companyName}</p>
+          <h3 className={styles.title}>{item.jobSnapshot.title}</h3>
+          <p className={styles.company}>{item.jobSnapshot.companyName}</p>
         </div>
         <ApplicationStatusBadge status={item.status} />
       </div>
@@ -56,21 +61,24 @@ export function DashboardJobCard({
         <span>Tracked {formatDate(item.appliedAt)}</span>
       </div>
 
-      <label className={styles.statusField}>
-        Status
-        <select
+      <label className={styles.field} htmlFor={`status-${item.id}`}>
+        <span className={styles.fieldLabel}>Status</span>
+        <Select
+          id={`status-${item.id}`}
           value={item.status}
           onChange={(event) => onStatusChange(item.id, event.target.value as ApplicationStatus)}
         >
           {STATUS_OPTIONS.map((status) => (
             <option key={status} value={status}>{status}</option>
           ))}
-        </select>
+        </Select>
       </label>
 
-      <label className={styles.notesField}>
-        Notes
+      <label className={styles.field} htmlFor={`notes-${item.id}`}>
+        <span className={styles.fieldLabel}>Notes</span>
         <textarea
+          id={`notes-${item.id}`}
+          className={styles.textarea}
           value={item.notes ?? ''}
           placeholder="Add interview notes or follow-up reminders"
           onChange={(event) => onNotesChange(item.id, event.target.value)}
@@ -78,12 +86,21 @@ export function DashboardJobCard({
       </label>
 
       <div className={styles.actions}>
-        <Link to={`/jobs/${item.jobId}`}>View job</Link>
-        <a href={item.jobSnapshot.applyUrl} target="_blank" rel="noopener noreferrer">
+        <Link to={`/jobs/${item.jobId}`} className={styles.link}>
+          View job
+        </Link>
+        <a
+          href={item.jobSnapshot.applyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.link}
+        >
           Open on {getSourceDisplayName(item.jobSnapshot.source)}
         </a>
-        <button type="button" onClick={() => onRemove(item.id)}>Remove</button>
+        <Button type="button" variant="ghost" className={styles.remove} onClick={() => onRemove(item.id)}>
+          Remove
+        </Button>
       </div>
-    </article>
+    </Card>
   );
 }
