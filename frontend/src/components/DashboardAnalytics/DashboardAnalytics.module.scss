@@ -1,0 +1,84 @@
+@use '../../styles/variables' as *;
+
+.panel {
+  background: $color-mist;
+  border: 1px solid $color-divider;
+  border-radius: $radius-md;
+  padding: $space-4;
+}
+
+.panelEmpty {
+  margin: 0;
+  padding: $space-4;
+  color: $color-fog;
+  font-size: $font-size-meta;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  gap: $space-4;
+}
+
+@include respond-md {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include respond-lg {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.chartCard {
+  display: grid;
+  gap: $space-3;
+  background: $color-surface;
+  border: 1px solid $color-divider;
+  border-radius: $radius-md;
+  padding: $space-4;
+  min-width: 0;
+}
+
+.chartHeader {
+  display: grid;
+  gap: $space-1;
+}
+
+.chartTitle {
+  margin: 0;
+  font-family: $font-display;
+  font-size: $font-size-meta;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+}
+
+.chartDescription {
+  margin: 0;
+  color: $color-fog;
+  font-size: $font-size-sm;
+  line-height: $line-height-meta;
+}
+
+.chartBody {
+  min-height: 220px;
+}
+
+.chartEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  margin: 0;
+  color: $color-fog;
+  font-size: $font-size-sm;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chartBody :global(*) {
+    animation: none !important;
+    transition: none !important;
+  }
+}

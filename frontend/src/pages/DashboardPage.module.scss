@@ -17,6 +17,11 @@
   padding: $space-5;
 }
 
+.headerIntro {
+  display: grid;
+  gap: $space-1;
+}
+
 .title {
   margin: 0;
   font-family: $font-display;
@@ -26,78 +31,118 @@
 }
 
 .subtitle {
-  margin: $space-1 0 0;
+  margin: 0;
   color: $color-fog;
   font-size: $font-size-meta;
 }
 
-.stats {
+.statsToggle {
+  flex-shrink: 0;
+}
+
+.kpiStrip {
   display: grid;
-  grid-template-columns: repeat(2, minmax(100px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: $space-2;
 }
 
 @include respond-sm {
-  .stats {
-    grid-template-columns: repeat(4, minmax(80px, 1fr));
+  .kpiStrip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-.statCard {
+@include respond-lg {
+  .kpiStrip {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
+.kpiTile {
   display: grid;
   gap: $space-1;
   padding: $space-3;
-  background: $color-mist;
+  background: $color-surface;
   border: 1px solid $color-divider;
   border-radius: $radius-md;
-  text-align: center;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color $duration-normal $ease-standard,
+    background-color $duration-normal $ease-standard;
+
+  &:hover {
+    border-color: rgba($color-harbor, 0.45);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 
-.statValue {
+.kpiTileActive {
+  border-color: $color-signal;
+  background: rgba($color-signal, 0.06);
+}
+
+.kpiValue {
   font-size: $font-size-display-md;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
   color: $color-ink;
 }
 
-.statLabel {
+.kpiLabel {
   font-size: $font-size-sm;
   color: $color-fog;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-.filtersWrap {
-  position: relative;
+.toolbar {
+  display: grid;
+  gap: $space-3;
+  background: $color-surface;
+  border: 1px solid $color-divider;
+  border-radius: $radius-md;
+  padding: $space-4;
+}
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: $space-1;
-    width: $space-6;
-    background: linear-gradient(to right, transparent, $color-mist);
-    pointer-events: none;
+.toolbarFields {
+  display: grid;
+  gap: $space-3;
+}
+
+@include respond-md {
+  .toolbarFields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.filters {
+@include respond-lg {
+  .toolbarFields {
+    grid-template-columns: 1.4fr 1fr 0.8fr 0.8fr;
+  }
+}
+
+.field {
+  display: grid;
+  gap: $space-1;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: $font-size-sm;
+  color: $color-fog;
+}
+
+.activeFilters {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: $space-2;
-  overflow-x: auto;
-  padding-bottom: $space-1;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
-.filterActive {
-  background: rgba($color-signal, 0.1);
-  border-color: $color-signal;
-  color: $color-ink;
+.clearAll {
+  margin-left: auto;
 }
 
 .grid {
@@ -161,6 +206,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .kpiTile,
   .searchJobs {
     transition: none;
   }
