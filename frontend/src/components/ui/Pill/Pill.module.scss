@@ -1,0 +1,55 @@
+@use '../../../styles/variables' as *;
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  min-height: 32px;
+  padding: 0 $space-3;
+  border: 1px solid $color-divider;
+  border-radius: $radius-pill;
+  background: $color-surface;
+  color: $color-ink;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  cursor: default;
+}
+
+button.pill {
+  cursor: pointer;
+  transition:
+    background-color $duration-normal $ease-standard,
+    border-color $duration-normal $ease-standard;
+
+  &:hover:not(:disabled) {
+    border-color: $color-harbor;
+    background: rgba($color-harbor, 0.06);
+  }
+}
+
+.label {
+  @include truncate;
+  max-width: 240px;
+}
+
+.remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: $radius-pill;
+  background: transparent;
+  color: $color-fog;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba($color-ink, 0.08);
+    color: $color-ink;
+  }
+}

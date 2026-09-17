@@ -2,6 +2,9 @@
 
 **Goal:** Cross-cutting quality — motion, focus, contrast, responsive QA, optional enhancements.
 
+**Status:** ✅ Finished  
+**Finished:** 2026-09-14
+
 **Estimated effort:** 0.5–1 session  
 **Depends on:** [Steps 1–5](./01-foundation.md)  
 **Blocks:** Nothing (final step)
@@ -10,12 +13,12 @@
 
 ### 6.1 Accessibility audit
 
-- [ ] All interactive elements keyboard reachable with visible `focus-ring`
-- [ ] Modal: focus moves to dialog; Esc closes (`onClose`)
-- [ ] Filter drawer (mobile): Esc closes, focus return
-- [ ] `SourceBadge`: `aria-label` includes source name
-- [ ] Color contrast: `signal` on white ≥ 4.5:1 (darken to `#D14E32` if needed)
-- [ ] Form inputs have associated `<label>` elements (FilterPanel, Dashboard)
+- [x] All interactive elements keyboard reachable with visible `focus-ring`
+- [x] Modal: focus moves to dialog; Esc closes (`onClose`)
+- [x] Filter drawer (mobile): Esc closes, focus return
+- [x] `SourceBadge`: `aria-label` includes source name
+- [x] Color contrast: `signal` on white ≥ 4.5:1 (darken to `#D14E32` if needed)
+- [x] Form inputs have associated `<label>` elements (FilterPanel, Dashboard)
 
 ### 6.2 Motion
 
@@ -35,9 +38,9 @@ Test viewports:
 
 ### 6.4 Optional enhancements (if time)
 
-- **Salary range slider** in `FilterPanel` — dual thumb or min/max synced to existing string state
-- **Tracked count badge** on “My Applications” nav when `stats.total > 0` (read hook in Layout — display only)
-- **Focus search on /** keyboard shortcut — only if it doesn’t conflict with browser defaults; document in plan
+- [x] **Salary range slider** in `FilterPanel` — min/max range inputs synced to existing string state
+- [x] **Tracked count badge** on “My Applications” nav when `stats.total > 0` (read hook in Layout — display only)
+- [x] **Focus search on /** keyboard shortcut — skips when focus is in an input; active on HomePage
 
 ### 6.5 Cross-page consistency pass
 
@@ -66,10 +69,10 @@ Manual checklist:
 
 ## Acceptance criteria
 
-- [ ] WCAG 2.1 AA target for text and UI components (pragmatic POC level)
-- [ ] No logic regressions per [constraints.md](./constraints.md)
-- [ ] `npm run build` passes
-- [ ] All success criteria in [README.md](./README.md) checked off
+- [x] WCAG 2.1 AA target for text and UI components (pragmatic POC level)
+- [x] No logic regressions per [constraints.md](./constraints.md)
+- [x] `npm run build` passes
+- [x] All success criteria in [README.md](./README.md) checked off
 
 ## Files touched
 

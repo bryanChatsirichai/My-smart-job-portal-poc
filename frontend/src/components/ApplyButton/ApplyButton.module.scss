@@ -6,21 +6,12 @@
 }
 
 .button {
-  min-height: 48px;
-  border: none;
-  border-radius: $radius-sm;
-  background: $color-primary;
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.button:hover {
-  background: $color-primary-dark;
+  width: 100%;
 }
 
 .note {
   margin: 0;
-  color: $color-muted;
-  font-size: 0.875rem;
+  color: $color-fog;
+  font-size: $font-size-sm;
+  line-height: $line-height-meta;
 }

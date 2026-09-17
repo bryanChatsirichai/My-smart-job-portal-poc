@@ -2,6 +2,9 @@
 
 **Goal:** Make the tracking pipeline feel intentional — stats at a glance, clear status filtering, cleaner cards.
 
+**Status:** ✅ Finished  
+**Finished:** 2026-09-14
+
 **Estimated effort:** 1 session  
 **Depends on:** [Steps 1–2](./01-foundation.md)  
 **Blocks:** Nothing
@@ -53,11 +56,11 @@
 
 ## Acceptance criteria
 
-- [ ] Filter by status works as before
-- [ ] Status select, notes textarea, remove, view job, external apply link all work
-- [ ] Stats reflect live `localStorage` data
-- [ ] Empty state shows when no items
-- [ ] `npm run build` passes
+- [x] Filter by status works as before
+- [x] Status select, notes textarea, remove, view job, external apply link all work
+- [x] Stats reflect live `localStorage` data
+- [x] Empty state shows when no items
+- [x] `npm run build` passes
 
 ## Files touched
 

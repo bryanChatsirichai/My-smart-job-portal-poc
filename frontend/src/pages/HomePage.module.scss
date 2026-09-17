@@ -6,19 +6,31 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #ecfeff, #f8fafc);
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  padding: $space-5;
+  display: grid;
+  gap: $space-3;
+  padding: $space-4 0 $space-2;
 }
 
-.hero h1 {
-  margin: 0 0 $space-2;
+.headline {
+  margin: 0;
+  font-family: $font-display;
+  font-size: $font-size-display-md;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-ink;
 }
 
-.hero p {
-  margin: 0 0 $space-4;
-  color: $color-muted;
+@include respond-md {
+  .headline {
+    font-size: $font-size-display-lg;
+  }
+}
+
+.subcopy {
+  margin: 0;
+  color: $color-fog;
+  font-size: $font-size-meta;
+  max-width: $content-max-width;
 }
 
 .layout {
@@ -36,6 +48,7 @@
 .results {
   display: grid;
   gap: $space-4;
+  min-width: 0;
 }
 
 .summary {
@@ -43,58 +56,103 @@
   gap: $space-2;
 }
 
+.summaryText {
+  font-size: $font-size-meta;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: $space-2;
 }
 
-.chip {
-  background: #ecfeff;
-  color: #0e7490;
-  border-radius: $radius-pill;
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
+.clearAll {
+  min-height: 32px;
+  padding: 0 $space-2;
+  font-size: $font-size-sm;
 }
 
 .list {
   display: grid;
-  gap: $space-3;
-}
-
-@include respond-md {
-  .list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  gap: $space-2;
 }
 
 .skeletons {
   display: grid;
-  gap: $space-3;
+  gap: $space-2;
 }
 
 .skeleton {
-  height: 120px;
+  height: 88px;
   border-radius: $radius-md;
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  border: 1px solid $color-divider;
+  background: linear-gradient(
+    90deg,
+    rgba($color-divider, 0.3) 25%,
+    rgba($color-divider, 0.15) 50%,
+    rgba($color-divider, 0.3) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.2s infinite;
 }
 
-.empty,
-.error {
+.empty {
+  display: grid;
+  gap: $space-3;
+  justify-items: start;
   background: $color-surface;
-  border: 1px solid $color-border;
+  border: 1px solid $color-divider;
   border-radius: $radius-md;
   padding: $space-5;
 }
 
+.empty h2 {
+  margin: 0;
+  font-family: $font-display;
+  font-size: $font-size-display-md;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+}
+
+.empty p {
+  margin: 0;
+  color: $color-fog;
+}
+
 .error {
+  margin: 0;
+  padding: $space-4;
+  background: rgba($status-rejected, 0.06);
+  border: 1px solid rgba($status-rejected, 0.2);
+  border-radius: $radius-md;
   color: $status-rejected;
+  font-size: $font-size-meta;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding-top: $space-2;
+}
+
+.pageInfo {
+  font-size: $font-size-meta;
+  color: $color-fog;
 }
 
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
 }

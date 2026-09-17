@@ -2,34 +2,84 @@
 
 .page {
   display: grid;
-  gap: $space-4;
+  gap: $space-5;
 }
 
 .header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: flex-start;
   gap: $space-4;
   background: $color-surface;
-  border: 1px solid $color-border;
+  border: 1px solid $color-divider;
   border-radius: $radius-md;
   padding: $space-5;
 }
 
-.header h1 {
+.title {
   margin: 0;
+  font-family: $font-display;
+  font-size: $font-size-display-md;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
 }
 
 .subtitle {
   margin: $space-1 0 0;
-  color: $color-muted;
+  color: $color-fog;
+  font-size: $font-size-meta;
 }
 
 .stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-2 $space-4;
-  color: $color-muted;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(100px, 1fr));
+  gap: $space-2;
+}
+
+@include respond-sm {
+  .stats {
+    grid-template-columns: repeat(4, minmax(80px, 1fr));
+  }
+}
+
+.statCard {
+  display: grid;
+  gap: $space-1;
+  padding: $space-3;
+  background: $color-mist;
+  border: 1px solid $color-divider;
+  border-radius: $radius-md;
+  text-align: center;
+}
+
+.statValue {
+  font-size: $font-size-display-md;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-ink;
+}
+
+.statLabel {
+  font-size: $font-size-sm;
+  color: $color-fog;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filtersWrap {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: $space-1;
+    width: $space-6;
+    background: linear-gradient(to right, transparent, $color-mist);
+    pointer-events: none;
+  }
 }
 
 .filters {
@@ -37,22 +87,17 @@
   gap: $space-2;
   overflow-x: auto;
   padding-bottom: $space-1;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.filters button {
-  min-height: 40px;
-  border: 1px solid $color-border;
-  border-radius: $radius-pill;
-  padding: 0 $space-3;
-  background: $color-surface;
-  text-transform: capitalize;
-  cursor: pointer;
-}
-
-.active {
-  background: $color-primary;
-  border-color: $color-primary;
-  color: white;
+.filterActive {
+  background: rgba($color-signal, 0.1);
+  border-color: $color-signal;
+  color: $color-ink;
 }
 
 .grid {
@@ -67,16 +112,56 @@
 }
 
 .empty {
+  display: grid;
+  gap: $space-3;
+  justify-items: start;
   background: $color-surface;
-  border: 1px solid $color-border;
+  border: 1px solid $color-divider;
   border-radius: $radius-md;
   padding: $space-5;
 }
 
 .empty h2 {
-  margin-top: 0;
+  margin: 0;
+  font-family: $font-display;
+  font-size: $font-size-display-md;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
 }
 
 .empty p {
-  color: $color-muted;
+  margin: 0;
+  color: $color-fog;
+  font-size: $font-size-meta;
+}
+
+.searchJobs {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 $space-4;
+  border-radius: $radius-md;
+  background: $color-signal;
+  border: 1px solid $color-signal;
+  color: $color-surface;
+  font-size: $font-size-meta;
+  font-weight: $font-weight-semibold;
+  text-decoration: none;
+  transition: background-color $duration-normal $ease-standard;
+
+  &:hover {
+    background: $color-signal-dark;
+    border-color: $color-signal-dark;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .searchJobs {
+    transition: none;
+  }
 }

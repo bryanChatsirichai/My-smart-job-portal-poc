@@ -1,47 +1,145 @@
 @use '../../styles/variables' as *;
 
+.mobileToggle {
+  width: 100%;
+}
+
+@include respond-lg {
+  .mobileToggle {
+    display: none;
+  }
+}
+
 .panel {
+  display: none;
   background: $color-surface;
-  border: 1px solid $color-border;
+  border: 1px solid $color-divider;
   border-radius: $radius-md;
   padding: $space-4;
+  gap: $space-4;
+}
+
+@include respond-lg {
+  .panel {
+    display: grid;
+    position: sticky;
+    top: calc(64px + $space-4);
+    align-self: start;
+  }
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: $font-size-meta;
+  font-weight: $font-weight-semibold;
+  color: $color-ink;
+}
+
+.section {
+  display: grid;
+  gap: $space-2;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-fog;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fieldGroup {
   display: grid;
   gap: $space-3;
 }
 
-.panel h2 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.panel label {
+.rangeGroup {
   display: grid;
   gap: $space-2;
-  font-size: 0.875rem;
-  color: $color-muted;
+  padding-top: $space-1;
 }
 
-.panel input {
-  min-height: 40px;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  padding: 0 $space-3;
+.rangeField {
+  display: grid;
+  gap: $space-1;
 }
 
-.panel select {
-  min-height: 40px;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  padding: 0 $space-3;
-  background: $color-surface;
-}
-
-.panel button {
-  min-height: 44px;
-  border: none;
-  border-radius: $radius-sm;
-  background: $color-primary;
-  color: white;
-  font-weight: 600;
+.range {
+  width: 100%;
+  accent-color: $color-signal;
   cursor: pointer;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.field {
+  display: grid;
+  gap: $space-1;
+}
+
+.fieldLabel {
+  font-size: $font-size-sm;
+  color: $color-fog;
+}
+
+.applyButton {
+  width: 100%;
+}
+
+.drawerBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: $z-drawer;
+  background: rgba($color-ink, 0.4);
+
+  @include respond-lg {
+    display: none;
+  }
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: calc($z-drawer + 1);
+  width: min(100%, 360px);
+  padding: $space-4;
+  display: grid;
+  align-content: start;
+  gap: $space-4;
+  background: $color-surface;
+  border-left: 1px solid $color-divider;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform $duration-normal $ease-standard;
+
+  @include respond-lg {
+    display: none;
+  }
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.drawerClose {
+  min-height: 36px;
+  padding: 0 $space-2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer {
+    transition: none;
+  }
 }

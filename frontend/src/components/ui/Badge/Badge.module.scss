@@ -1,0 +1,82 @@
+@use '../../../styles/variables' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: $radius-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  white-space: nowrap;
+}
+
+.source {
+  padding: 3px $space-2;
+  border: 1px solid transparent;
+}
+
+.status {
+  padding: 4px $space-2;
+  border-radius: $radius-pill;
+  text-transform: capitalize;
+}
+
+.source-mycareersfuture {
+  background: rgba($source-mycareersfuture, 0.12);
+  color: $source-mycareersfuture;
+  border-color: rgba($source-mycareersfuture, 0.2);
+}
+
+.source-linkedin {
+  background: rgba($source-linkedin, 0.12);
+  color: $source-linkedin;
+  border-color: rgba($source-linkedin, 0.2);
+}
+
+.source-adzuna {
+  background: rgba($source-adzuna, 0.12);
+  color: $source-adzuna;
+  border-color: rgba($source-adzuna, 0.2);
+}
+
+.source-jobicy {
+  background: rgba($source-jobicy, 0.12);
+  color: $source-jobicy;
+  border-color: rgba($source-jobicy, 0.2);
+}
+
+.source-default {
+  background: $color-mist;
+  color: $color-fog;
+  border-color: $color-divider;
+}
+
+.status-applied {
+  background: rgba($status-applied, 0.12);
+  color: $status-applied;
+}
+
+.status-interview {
+  background: rgba($status-interview, 0.12);
+  color: $status-interview;
+}
+
+.status-rejected {
+  background: rgba($status-rejected, 0.12);
+  color: $status-rejected;
+}
+
+.status-accepted {
+  background: rgba($status-accepted, 0.12);
+  color: $status-accepted;
+}
+
+.status-saved {
+  background: rgba($status-saved, 0.14);
+  color: $status-saved;
+}
+
+.status-withdrawn {
+  background: rgba($status-withdrawn, 0.14);
+  color: $status-withdrawn;
+}

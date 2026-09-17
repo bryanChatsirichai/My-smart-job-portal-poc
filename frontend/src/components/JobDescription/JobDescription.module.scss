@@ -1,0 +1,81 @@
+@use '../../styles/variables' as *;
+
+.body {
+  max-width: $content-max-width;
+  color: $color-ink;
+  font-size: $font-size-body;
+  line-height: $line-height-body;
+
+  :first-child {
+    margin-top: 0;
+  }
+
+  :last-child {
+    margin-bottom: 0;
+  }
+
+  p {
+    margin: 0 0 $space-3;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: $space-4 0 $space-2;
+    font-family: $font-display;
+    font-weight: $font-weight-semibold;
+    line-height: $line-height-tight;
+    color: $color-ink;
+  }
+
+  h1 {
+    font-size: $font-size-display-md;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+  }
+
+  h3,
+  h4 {
+    font-size: $font-size-body;
+  }
+
+  ul,
+  ol {
+    margin: 0 0 $space-3;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    margin-bottom: $space-2;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong,
+  b {
+    font-weight: $font-weight-semibold;
+  }
+
+  a {
+    color: $color-harbor;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: $color-ink;
+    }
+  }
+}
+
+.empty {
+  margin: 0;
+  max-width: $content-max-width;
+  color: $color-fog;
+  font-size: $font-size-body;
+  line-height: $line-height-body;
+}

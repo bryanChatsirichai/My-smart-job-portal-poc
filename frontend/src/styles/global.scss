@@ -14,15 +14,20 @@ body,
 }
 
 body {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: $color-text;
-  background: $color-bg;
-  line-height: 1.5;
+  font-family: $font-ui;
+  color: $color-ink;
+  background: $color-mist;
+  line-height: $line-height-body;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: $radius-xs;
+  }
 }
 
 button,
@@ -30,6 +35,11 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+::selection {
+  background: rgba($color-signal, 0.18);
+  color: $color-ink;
 }
 
 @media (prefers-reduced-motion: reduce) {

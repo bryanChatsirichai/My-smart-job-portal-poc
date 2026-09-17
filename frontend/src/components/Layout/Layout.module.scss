@@ -2,21 +2,22 @@
 
 .layout {
   min-height: 100vh;
+  background: $color-mist;
 }
 
 .header {
   position: sticky;
   top: 0;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid $color-border;
+  z-index: $z-header;
+  background: rgba($color-surface, 0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid $color-divider;
 }
 
 .headerInner {
-  max-width: 1200px;
+  max-width: $layout-max-width;
   margin: 0 auto;
-  padding: $space-4;
+  padding: $space-3 $space-4;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,32 +25,98 @@
 }
 
 .logo {
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-family: $font-display;
+  font-weight: $font-weight-semibold;
   font-size: 1.125rem;
-  color: $color-primary;
+  color: $color-ink;
+  text-decoration: none;
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: $radius-sm;
+  }
+}
+
+.logoMark {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: $radius-pill;
+  background: $color-signal;
 }
 
 .nav {
   display: flex;
-  gap: $space-4;
+  gap: $space-1;
 }
 
 .nav a {
-  color: $color-muted;
-  font-weight: 500;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  min-height: 44px;
+  padding: 0 $space-3;
+  color: $color-fog;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-meta;
+  text-decoration: none;
+  transition: color $duration-normal $ease-standard;
+
+  &:hover {
+    color: $color-ink;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: $radius-sm;
+  }
 }
 
 .active {
-  color: $color-primary !important;
+  color: $color-ink !important;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: $space-3;
+    right: $space-3;
+    height: 2px;
+    background: $color-signal;
+    border-radius: $radius-pill;
+  }
 }
 
 .main {
-  max-width: 1200px;
+  max-width: $layout-max-width;
   margin: 0 auto;
   padding: $space-4;
 }
 
+.navBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: $radius-pill;
+  background: $color-signal;
+  color: $color-surface;
+  font-size: 0.6875rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+}
+
 @include respond-md {
+  .headerInner {
+    padding: $space-3 $space-5;
+  }
+
   .main {
     padding: $space-5;
   }
