@@ -2,9 +2,11 @@
 
 This document describes how the Smart Job Portal POC gathers job listings from external job-board APIs, normalizes them into a single schema, stores them locally, and serves them to the React frontend.
 
-**Current state (POC):** Two job sources:
+**Current state (POC):** Four job sources:
 - **MyCareersFuture** — public API, no key required
+- **Jobicy** — public API, no key required ([Jobicy API](https://jobicy.com/jobs-rss-feed))
 - **Adzuna** — official API (Singapore), requires free API key from [developer.adzuna.com](https://developer.adzuna.com)
+- **LinkedIn** — self-hosted [LinkedIn Jobs API](https://github.com/atharv01h/Linkedin-Jobs-Api) scraper (sync only)
 
 ---
 
@@ -94,7 +96,7 @@ class JobSourceAdapter(ABC):
 | Source ID | `raw["uuid"]` → `source_job_id` |
 | Apply URL | `metadata.jobDetailsUrl` |
 
-Full reference: [adapters/mycareersfuture.md](./adapters/mycareersfuture.md)
+Full reference: [mycareersfuture.md](../adapters/mycareersfuture.md)
 
 ### Adzuna (second source)
 
@@ -109,7 +111,7 @@ Full reference: [adapters/mycareersfuture.md](./adapters/mycareersfuture.md)
 
 The adapter is **only registered** when both env vars are set. Without keys, sync continues with MyCareersFuture only (no accidental expiry of Adzuna rows).
 
-Full reference: [adapters/adzuna.md](./adapters/adzuna.md)
+Full reference: [adzuna.md](../adapters/adzuna.md)
 
 ### Adding more sources
 
@@ -169,7 +171,11 @@ The worker loops `page = 0, 1, …` until `page >= max_pages` or the source retu
 | Source | Default page size (`config.py`) | `--max-pages 2` ≈ max jobs |
 |--------|----------------------------------|----------------------------|
 | MyCareersFuture | 100 (`mcf_page_size`) | ~200 |
+| Jobicy | 200 (`jobicy_page_size`) | `--max-pages 1` → 100 jobs; `2` or default → 200 (API max) |
 | Adzuna | 50 (`adzuna_page_size`) | ~100 |
+| LinkedIn | 70 (`linkedin_page_size`) | ~140 (requires self-hosted scraper on `localhost:3000`) |
+
+**Jobicy:** one API call per sync; `count` is `100 × --max-pages` (1→100, 2→200), or **200** when `--max-pages` is omitted. Optional filters in `backend/.env`: `JOBICY_GEO`, `JOBICY_INDUSTRY`, `JOBICY_TAG`.
 
 - **With `--max-pages 2`:** fast POC runs, fewer external API calls.
 - **Without `--max-pages`:** full sync — keeps paging until each source is exhausted (can be tens of thousands of listings for MyCareersFuture).

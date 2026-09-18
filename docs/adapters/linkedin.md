@@ -115,4 +115,4 @@ Job descriptions are **not** stored (search endpoint does not return them). Sala
 - **Enabled by default** — points at `http://localhost:3000/api/v1`; set `LINKEDIN_JOBS_API_URL=` to disable.
 - Use in line with LinkedIn's terms and applicable law.
 
-See also: [job-ingestion-architecture.md](../job-ingestion-architecture.md)
+See also: [job-ingestion.md](../architecture/job-ingestion.md)

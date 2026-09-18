@@ -71,6 +71,8 @@ External APIs  →  sync worker (--sync)  →  jobportal.db  →  FastAPI  →  
 
 When you search or open a job card, FastAPI queries the local database. External APIs are contacted only when you run the sync worker.
 
+See [job ingestion architecture](docs/architecture/job-ingestion.md) for the full pipeline, sync behaviour, and `--max-pages` expiry rules.
+
 ### Refreshing job data
 
 Re-run sync when you want fresher listings. No need to restart `uvicorn` — reload the browser after sync completes.
@@ -89,92 +91,30 @@ uv run python -m app.worker --sync
 | `--sync` | Fetch from each registered source and upsert into SQLite |
 | `--max-pages N` | Stop after **N pages per source** (not N jobs total). Omit for a full sync |
 
-**What `--max-pages 2` fetches** (page sizes from `backend/app/config.py`):
+Use `--max-pages 2` for fast local testing; use full `--sync` when you want a complete dataset. Per-source page sizes and expiry behaviour are documented in [job ingestion architecture](docs/architecture/job-ingestion.md).
 
-| Source | Jobs per page | With `--max-pages 2` |
-|--------|---------------|----------------------|
-| MyCareersFuture | 100 | up to ~200 jobs |
-| Jobicy | 200 | `--max-pages 1` → 100 jobs; `2` or default → 200 (API max) |
-| Adzuna | 50 | up to ~100 jobs |
-| LinkedIn | 70 | up to ~140 jobs (requires self-hosted scraper on `localhost:3000`) |
-
-Use `--max-pages 2` for fast local testing; use full `--sync` when you want a complete dataset.
-
-**Jobicy:** one API call per sync; `count` is `100 × --max-pages` (1→100, 2→200), or **200** when `--max-pages` is omitted. Optional filters in `backend/.env`: `JOBICY_GEO`, `JOBICY_INDUSTRY`, `JOBICY_TAG` — see [Jobicy API docs](https://jobicy.com/jobs-rss-feed).
-
-See [job ingestion architecture](./docs/job-ingestion-architecture.md) for the full pipeline.
+**Jobicy:** optional filters in `backend/.env`: `JOBICY_GEO`, `JOBICY_INDUSTRY`, `JOBICY_TAG` — see [Jobicy API docs](https://jobicy.com/jobs-rss-feed).
 
 ### LinkedIn (optional)
 
-LinkedIn listings are **not** fetched when users search the portal. They are ingested during `--sync`, same as every other source. You must run the unofficial [LinkedIn Jobs API](https://github.com/atharv01h/Linkedin-Jobs-Api) scraper as a **separate Node service** before syncing.
-
-**1. Start the scraper** (one-time clone; keep this terminal running during sync):
-
-```bash
-git clone https://github.com/atharv01h/Linkedin-Jobs-Api.git
-cd Linkedin-Jobs-Api
-npm install
-npm run dev --workspace=backend   # listens on http://localhost:3000
-```
-
-Swagger docs: http://localhost:3000/api/v1/docs
-
-**2. Configure the portal backend (optional)** — defaults work for local dev:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `LINKEDIN_JOBS_API_URL` | `http://localhost:3000/api/v1` | Scraper API base URL |
-| `LINKEDIN_LOCATION` | `Singapore` | Location filter |
-| `LINKEDIN_KEYWORDS` | `""` | Optional search keywords |
-| `LINKEDIN_DATE_SINCE_POSTED` | `past_week` | `past_24h`, `past_week`, or `past_month` |
-
-Set `LINKEDIN_JOBS_API_URL=` in `backend/.env` to disable LinkedIn sync.
-
-**3. Sync** (scraper must be running):
-
-```bash
-cd backend
-uv run python -m app.worker --sync --max-pages 2
-```
-
-Expected output includes a `linkedin` entry (e.g. `fetched: 140` with `--max-pages 2`). The adapter calls `GET /jobs/search?location=Singapore&page=1` then `page=2`.
-
-**4. Browse** — filter by **LinkedIn** in the UI, or set `?source=linkedin` in the URL. Apply links open LinkedIn in a new tab.
-
-> **Note:** This uses an unofficial LinkedIn scraper (Puppeteer). It may break if LinkedIn changes their site, and job descriptions are not stored in the POC. Use responsibly.
+LinkedIn requires a separate scraper service before sync. See [LinkedIn scraper setup](docs/development/linkedin-scraper.md).
 
 ### Database
 
-**Current POC — SQLite (default):**
+**Current POC — SQLite (default):** `sqlite:///./jobportal.db` in `backend/.env`. No Docker required.
 
-The backend uses **SQLite** by default (`sqlite:///./jobportal.db` in `backend/.env`). No Docker or separate database server is required to run the POC locally.
-
-To browse job rows during dev testing, see [docs/sqlite-db-viewer-setup.md](docs/sqlite-db-viewer-setup.md) (DB Browser for SQLite on Mac and Windows).
-
-**Future — Postgres via Docker/Podman (optional, not required now):**
-
-[`backend/docker/postgres/docker-compose.yml`](backend/docker/postgres/docker-compose.yml) is included for when you later move job storage to Postgres (e.g. production scale, full sync volume, or hosted deployment). You do **not** need to run it for the current POC.
-
-When ready:
-
-```bash
-cd backend/docker/postgres
-cp .env.example .env   # adjust credentials if needed
-podman compose up -d   # or: docker compose up -d
-podman compose ps      # should show healthy after ~10s
-```
-
-Then set in `backend/.env`:
-
-```env
-DATABASE_URL=postgresql+psycopg2://jobportal:jobportal@localhost:5432/jobportal
-```
-
-Re-run `uv run python -m app.worker --init-db` and sync after switching.
+- Browse job rows: [SQLite viewer setup](docs/development/sqlite-viewer.md)
+- Optional Postgres: [Local PostgreSQL](docs/development/postgres-local.md)
 
 ## Documentation
 
-See [`docs/`](docs/) for architecture details — especially [job ingestion](./docs/job-ingestion-architecture.md) (how jobs are gathered from APIs and served to the frontend) and [viewing SQLite during dev](./docs/sqlite-db-viewer-setup.md).
+| Area | Entry |
+|------|-------|
+| All reference docs | [`docs/README.md`](docs/README.md) |
+| Job ingestion pipeline | [docs/architecture/job-ingestion.md](docs/architecture/job-ingestion.md) |
+| Dev guides (SQLite, LinkedIn, Postgres) | [docs/development/](docs/development/) |
+| Job source adapters | [docs/adapters/](docs/adapters/) |
+| Implementation plans | [`plan/README.md`](plan/README.md) |
 
 ## Environment
 
@@ -186,5 +126,5 @@ See [`docs/`](docs/) for architecture details — especially [job ingestion](./d
 ## Notes
 
 - Application tracking is stored in browser `localStorage` for this POC.
-- Future production should move tracking to Postgres with portal auth.
+- Future production should move tracking to Postgres with portal auth — see [database setup plan](plan/database-setup/README.md).
 - `backend/docker/postgres/docker-compose.yml` is kept for **future database use** (Postgres); SQLite remains the default until you choose to switch.

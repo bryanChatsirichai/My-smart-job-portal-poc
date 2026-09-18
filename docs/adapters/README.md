@@ -16,4 +16,4 @@ cd backend
 uv run python -m app.worker --sync --max-pages 2
 ```
 
-`--max-pages` caps pages **per source** — use for local dev. See [job-ingestion-architecture.md](../job-ingestion-architecture.md) for the full pipeline.
+`--max-pages` caps pages **per source** — use for local dev. See [job-ingestion.md](../architecture/job-ingestion.md) for the full pipeline.

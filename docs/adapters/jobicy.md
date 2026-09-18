@@ -99,4 +99,4 @@ Apply URL fallback: `https://jobicy.com/jobs/{id}`
 - Remote jobs only — not Singapore-government listings like MyCareersFuture.
 - Single fetch per sync; `--max-pages` controls how many jobs are requested (up to 200).
 
-See also: [job-ingestion-architecture.md](../job-ingestion-architecture.md)
+See also: [job-ingestion.md](../architecture/job-ingestion.md)

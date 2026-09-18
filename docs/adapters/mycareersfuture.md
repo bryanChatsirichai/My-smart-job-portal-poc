@@ -102,4 +102,4 @@ Apply URL fallback: `https://www.mycareersfuture.gov.sg/job/{uuid}`
 - Full job descriptions are stored.
 - Public API — no retries/backoff in this POC.
 
-See also: [adzuna.md](./adzuna.md) · [job-ingestion-architecture.md](../job-ingestion-architecture.md)
+See also: [adzuna.md](./adzuna.md) · [job-ingestion.md](../architecture/job-ingestion.md)

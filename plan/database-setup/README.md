@@ -14,7 +14,7 @@ Step-by-step plan to move from SQLite-only local POC toward a deployable setup w
 
 ## Architecture summary
 
-Full rationale and diagrams: [00-overview.md](./00-overview.md).
+Full rationale and diagrams: [overview.md](./overview.md).
 
 ```
 External APIs  →  worker (--sync)  →  jobs table  →  FastAPI  →  React
@@ -93,5 +93,5 @@ flowchart TD
 ## Related docs
 
 - [Product README](../../README.md)
-- [Job ingestion architecture](../../docs/job-ingestion-architecture.md)
+- [Job ingestion architecture](../../docs/architecture/job-ingestion.md)
 - [Frontend UI redesign plan](../frontend-ui-redesign/README.md)

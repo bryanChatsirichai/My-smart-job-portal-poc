@@ -109,4 +109,4 @@ Apply URL fallback: `https://www.adzuna.sg/details/{id}`
 - Rate limits apply per developer account — use `--max-pages` for testing.
 - No search filters yet — paginated Singapore listings only.
 
-See also: [mycareersfuture.md](./mycareersfuture.md) · [job-ingestion-architecture.md](../job-ingestion-architecture.md)
+See also: [mycareersfuture.md](./mycareersfuture.md) · [job-ingestion.md](../architecture/job-ingestion.md)
