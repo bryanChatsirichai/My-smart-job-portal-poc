@@ -151,14 +151,17 @@ The backend uses **SQLite** by default (`sqlite:///./jobportal.db` in `backend/.
 
 To browse job rows during dev testing, see [docs/sqlite-db-viewer-setup.md](docs/sqlite-db-viewer-setup.md) (DB Browser for SQLite on Mac and Windows).
 
-**Future — Postgres via Docker (optional, not required now):**
+**Future — Postgres via Docker/Podman (optional, not required now):**
 
-[`docker-compose.yml`](docker-compose.yml) is included for when you later move job storage to Postgres (e.g. production scale, full sync volume, or hosted deployment). You do **not** need to run it for the current POC.
+[`backend/docker/postgres/docker-compose.yml`](backend/docker/postgres/docker-compose.yml) is included for when you later move job storage to Postgres (e.g. production scale, full sync volume, or hosted deployment). You do **not** need to run it for the current POC.
 
 When ready:
 
 ```bash
-docker compose up -d
+cd backend/docker/postgres
+cp .env.example .env   # adjust credentials if needed
+podman compose up -d   # or: docker compose up -d
+podman compose ps      # should show healthy after ~10s
 ```
 
 Then set in `backend/.env`:
@@ -184,4 +187,4 @@ See [`docs/`](docs/) for architecture details — especially [job ingestion](./d
 
 - Application tracking is stored in browser `localStorage` for this POC.
 - Future production should move tracking to Postgres with portal auth.
-- `docker-compose.yml` is kept for **future database use** (Postgres); SQLite remains the default until you choose to switch.
+- `backend/docker/postgres/docker-compose.yml` is kept for **future database use** (Postgres); SQLite remains the default until you choose to switch.

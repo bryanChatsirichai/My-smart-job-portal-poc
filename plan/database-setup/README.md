@@ -48,7 +48,7 @@ flowchart TD
 
 | Step | Document | Status | Finished |
 |------|----------|--------|----------|
-| 1.1 | [jobdb/01-docker-compose.md](./jobdb/01-docker-compose.md) | ⬜ Not started | — |
+| 1.1 | [jobdb/01-docker-compose.md](./jobdb/01-docker-compose.md) | ✅ Done | 2026-09-18 |
 | 1.2 | [jobdb/02-alembic-migrations.md](./jobdb/02-alembic-migrations.md) | ⬜ Not started | — |
 | 1.3 | [jobdb/03-dual-backend-verify.md](./jobdb/03-dual-backend-verify.md) | ⬜ Not started | — |
 | 1.4 | [jobdb/04-production-hardening.md](./jobdb/04-production-hardening.md) | ⬜ Not started | — |

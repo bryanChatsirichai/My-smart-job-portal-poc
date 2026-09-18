@@ -301,7 +301,7 @@ Data is a **cache** refreshed on each sync run, not live on every user search.
 |------|--------|
 | Default URL | `sqlite:///./jobportal.db` (see `backend/.env`) |
 | Table | `jobs` |
-| Future option | Postgres via `docker-compose.yml` + `DATABASE_URL` |
+| Future option | Postgres via `backend/docker/postgres/docker-compose.yml` + `DATABASE_URL` |
 
 The frontend **never** reads SQLite directly. It only talks to FastAPI.
 
@@ -408,7 +408,7 @@ frontend/
 
 | Area | Direction |
 |------|-----------|
-| Database | Postgres via `docker-compose.yml` for production scale |
+| Database | Postgres via `backend/docker/postgres/docker-compose.yml` for production scale |
 | Sync schedule | APScheduler cron (`backend/app/worker/scheduler.py`) |
 | Freshness UI | Show "Last synced at …" on search page |
 | Hybrid refresh | Re-fetch single job from source on detail view |
