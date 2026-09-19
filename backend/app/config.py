@@ -4,14 +4,21 @@ Values are resolved when ``settings = Settings()`` runs at import time.
 
 Priority (highest wins):
   1. Default on each field below
-  2. ``backend/.env`` — loaded because ``env_file=".env"`` (relative to process cwd)
+  2. ``backend/.env`` — always resolved from this package (not process cwd)
   3. OS environment variables
+
+``DATABASE_URL`` is the single switch for worker, API (``get_db``), and Alembic.
 
 Field names map to env vars automatically: ``adzuna_app_key`` → ``ADZUNA_APP_KEY``.
 """
 
+from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_BACKEND_DIR = Path(__file__).resolve().parent.parent
+_ENV_FILE = _BACKEND_DIR / ".env"
 
 
 class Settings(BaseSettings):
@@ -19,7 +26,7 @@ class Settings(BaseSettings):
     #   snake_case field → UPPER_SNAKE_CASE env var (e.g. adzuna_app_key → ADZUNA_APP_KEY).
     # Field() only sets defaults/descriptions; it does not wire the env name.
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(_ENV_FILE),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -65,6 +72,14 @@ class Settings(BaseSettings):
     linkedin_keywords: str = Field(default="", description="Env LINKEDIN_KEYWORDS")  # LINKEDIN_KEYWORDS
     linkedin_location: str = "Singapore"  # LINKEDIN_LOCATION
     linkedin_date_since_posted: str = "past_week"  # LINKEDIN_DATE_SINCE_POSTED
+
+    @property
+    def database_backend(self) -> str:
+        if self.database_url.startswith("sqlite"):
+            return "sqlite"
+        if self.database_url.startswith("postgresql"):
+            return "postgres"
+        return "other"
 
 
 settings = Settings()

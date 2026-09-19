@@ -49,6 +49,7 @@ class JobSearchResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     status: str
+    database: str
 
 
 class CanonicalJobInput(BaseModel):
